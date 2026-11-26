@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智能产线数字孪生平台 · 大屏导航中心</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --bg-base:#0E3862; --bg-mid:#1C4670; --bg-deep:#0B2C47;
+    --bg-panel:rgba(27,72,110,.55); --bg-panel-hover:rgba(62,134,180,.42);
+    --border-base:rgba(150,205,220,.42); --border-soft:rgba(150,205,220,.20);
+    --text-primary:#EAF6FF; --text-secondary:#BFD4E2; --text-tertiary:#7FA8BF;
+    --brand-cyan:#6FDCEA; --brand-blue:#3E86B4; --state-ok:#4FD69B;
+    --glow-primary:rgba(111,220,234,.5);
+  }
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-deep);
+    font-family:"Microsoft YaHei","PingFang SC","Source Han Sans SC",sans-serif;color:var(--text-primary);}
+  button{font-family:inherit;color:inherit;cursor:pointer;}
+
+  /* ============ 固定画布 ============ */
+  #stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;
+    transform-origin:center center;transform:translate(-50%,-50%) scale(var(--s,1));overflow:hidden;
+    background:
+      radial-gradient(760px 620px at 50% 46%,rgba(111,220,234,.16),transparent 68%),
+      radial-gradient(900px 520px at 0% 100%,rgba(11,44,71,.85),transparent 70%),
+      radial-gradient(900px 520px at 100% 0%,rgba(11,44,71,.7),transparent 70%),
+      linear-gradient(180deg,#17436d 0%,#11385d 48%,#0B2C47 100%);}
+  #stage::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:linear-gradient(rgba(150,205,220,.05) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(150,205,220,.05) 1px,transparent 1px);
+    background-size:48px 48px;
+    -webkit-mask-image:radial-gradient(1200px 800px at 50% 50%,#000 30%,transparent 100%);
+    mask-image:radial-gradient(1200px 800px at 50% 50%,#000 30%,transparent 100%);}
+  #stage::after{content:"";position:absolute;left:0;right:0;top:0;height:3px;
+    background:linear-gradient(90deg,transparent,var(--brand-cyan),transparent);opacity:.85;z-index:7;}
+
+  /* ============ 顶部标题栏：复用指挥大屏头部元素 ============ */
+  header{position:absolute;left:0;right:0;top:0;height:64px;z-index:6;overflow:hidden;
+    display:flex;align-items:center;justify-content:space-between;padding:0 46px;
+    background:url('Commanding%20_screens/assets/images/header-bg-clean.png') center -18px / 100% auto no-repeat;}
+  .hd-left{display:flex;align-items:center;min-width:340px;}
+  .hd-logo{width:48px;height:48px;object-fit:contain;border-radius:3px;
+    filter:drop-shadow(0 0 12px rgba(111,220,234,.55));}
+  .hd-right{display:flex;align-items:baseline;gap:16px;margin-left:auto;text-align:right;position:relative;z-index:1;}
+  .hd-right b{color:var(--text-primary);font-size:20px;font-weight:600;letter-spacing:1px;font-variant-numeric:tabular-nums;}
+  .hd-right span{color:var(--text-secondary);font-size:14px;}
+  .hd-title{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;
+    pointer-events:none;font-size:32px;font-weight:700;letter-spacing:4px;color:var(--text-primary);}
+  .hd-title span{color:var(--brand-cyan);margin:0 8px;font-weight:400;font-size:20px;}
+
+  /* ============ 面板 ============ */
+  .panel{position:absolute;width:566px;z-index:4;display:flex;flex-direction:column;
+    background:linear-gradient(180deg,rgba(24,74,113,.62),rgba(12,48,78,.5));
+    border:1px solid var(--border-base);border-radius:3px;
+    box-shadow:0 0 28px rgba(6,26,48,.35),0 0 0 1px rgba(111,220,234,.05) inset;}
+  .panel::before,.panel::after{content:"";position:absolute;width:14px;height:14px;border:2px solid var(--brand-cyan);
+    filter:drop-shadow(0 0 4px var(--glow-primary));}
+  .panel::before{left:-1px;top:-1px;border-right:0;border-bottom:0;}
+  .panel::after{right:-1px;bottom:-1px;border-left:0;border-top:0;}
+  /* 左列：指挥中心 + 参观屏；右列：生产屏整铺 */
+  .panel.cmd{left:46px;top:84px;height:452px;}
+  .panel.visit{left:46px;top:552px;height:478px;}
+  .panel.prod{right:46px;top:84px;height:946px;}
+  .p-head{flex:0 0 46px;display:flex;align-items:center;gap:9px;padding:0 18px;
+    border-bottom:1px solid var(--border-soft);font-size:18px;font-weight:600;letter-spacing:2px;}
+  .p-head .dia{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;
+    border-bottom:9px solid var(--brand-cyan);filter:drop-shadow(0 0 5px var(--glow-primary));}
+  .p-body{flex:1;min-height:0;padding:12px 16px;overflow:hidden;}
+
+  /* ============ 指挥大屏 主卡 ============ */
+  .hero-entry{position:relative;height:86px;display:flex;align-items:center;justify-content:center;gap:20px;
+    border:1px solid rgba(111,220,234,.65);cursor:pointer;overflow:hidden;
+    background:linear-gradient(115deg,rgba(28,96,140,.8),rgba(14,54,88,.6));
+    clip-path:polygon(15px 0,calc(100% - 15px) 0,100% 15px,100% calc(100% - 15px),calc(100% - 15px) 100%,15px 100%,0 calc(100% - 15px),0 15px);
+    transition:transform .24s,filter .24s;}
+  .hero-entry::before{content:"";position:absolute;inset:4px;pointer-events:none;
+    border:1px solid rgba(111,220,234,.28);
+    clip-path:polygon(11px 0,calc(100% - 11px) 0,100% 11px,100% calc(100% - 11px),calc(100% - 11px) 100%,11px 100%,0 calc(100% - 11px),0 11px);}
+  .hero-entry::after{content:"";position:absolute;left:24%;right:24%;bottom:8px;height:2px;pointer-events:none;
+    background:linear-gradient(90deg,transparent,var(--brand-cyan),transparent);box-shadow:0 0 10px rgba(111,220,234,.9);}
+  .hero-entry:hover{transform:translateY(-2px);filter:brightness(1.18);}
+  .hero-entry .h-ic{position:relative;width:96px;height:78px;display:flex;align-items:center;justify-content:center;}
+  .hero-entry .h-ic img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;
+    filter:drop-shadow(0 4px 10px rgba(0,0,0,.4)) drop-shadow(0 0 10px rgba(111,220,234,.45));}
+  .hero-entry h2{font-size:26px;letter-spacing:4px;font-weight:700;text-shadow:0 0 12px rgba(111,220,234,.45);}
+  .hero-entry .h-dot{width:9px;height:9px;border-radius:50%;background:var(--state-ok);box-shadow:0 0 10px rgba(79,214,155,.85);}
+
+  /* ============ 正方形模块入口(card) · 科技感切角边框 ============ */
+  .module-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:10px;}
+  .tile{--tc:var(--brand-cyan);--trgb:111,220,234;
+    position:relative;display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+    aspect-ratio:1;padding:12px 6px 15px;text-align:center;overflow:hidden;cursor:pointer;
+    color:var(--text-primary);border:1px solid rgba(var(--trgb),.62);
+    background:linear-gradient(160deg,rgba(26,88,132,.72),rgba(10,44,72,.62));
+    clip-path:polygon(13px 0,calc(100% - 13px) 0,100% 13px,100% calc(100% - 13px),calc(100% - 13px) 100%,13px 100%,0 calc(100% - 13px),0 13px);
+    transition:transform .24s,background .24s,filter .24s;}
+  .tile::before{content:"";position:absolute;inset:4px;pointer-events:none;
+    border:1px solid rgba(var(--trgb),.24);
+    clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0 calc(100% - 10px),0 10px);
+    background:
+      linear-gradient(90deg,transparent,rgba(var(--trgb),.6),transparent) center 7px/46px 1px no-repeat,
+      radial-gradient(120px 90px at 50% 36%,rgba(var(--trgb),.16),transparent 72%);}
+  .tile::after{content:"";position:absolute;left:18%;right:18%;bottom:9px;height:2px;pointer-events:none;
+    background:linear-gradient(90deg,transparent,var(--tc),transparent);
+    box-shadow:0 0 10px rgba(var(--trgb),.9);opacity:.9;transition:opacity .24s,left .24s,right .24s;}
+  .tile:hover{transform:translateY(-3px);filter:brightness(1.18);
+    background:linear-gradient(160deg,rgba(38,112,158,.92),rgba(14,56,90,.8));}
+  .tile:hover::after{opacity:1;left:10%;right:10%;}
+  .tile .t-ic{position:relative;z-index:1;flex:0 0 auto;width:66px;height:66px;
+    display:flex;align-items:center;justify-content:center;}
+  .tile .t-ic img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;
+    filter:drop-shadow(0 3px 6px rgba(0,0,0,.45)) drop-shadow(0 0 8px rgba(111,220,234,.3));}
+  .tile .t-tx{position:relative;z-index:1;font-size:11px;line-height:1.4;color:var(--text-primary);
+    font-weight:600;letter-spacing:.5px;text-shadow:0 2px 6px rgba(0,0,0,.6);}
+  .tile .t-dot{position:absolute;right:9px;top:9px;width:6px;height:6px;border-radius:50%;z-index:2;
+    background:var(--state-ok);box-shadow:0 0 8px rgba(79,214,155,.9);}
+  /* 8个运营模块先蓝后绿 */
+  .module-grid .tile:nth-child(2n){--tc:var(--state-ok);--trgb:79,214,155;}
+  /* 参观屏/生产屏 正方形网格：行高填满面板，消除底部留白 */
+  .square-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:12px;height:100%;}
+  .panel.prod .square-grid{grid-template-rows:repeat(4,1fr);}
+  /* 参观屏/生产屏卡片：高度随行撑满，图标适中不喧宾夺主 */
+  .square-grid .tile{aspect-ratio:auto;height:100%;padding:12px 3px 10px;justify-content:center;gap:6px;}
+  .square-grid .tile .t-ic{width:66px;height:66px;max-width:70%;max-height:64%;}
+  /* 生产屏/参观屏文字：统一字号，强制一行完整显示 */
+  .square-grid .tile .t-tx{font-size:11px;letter-spacing:0;white-space:nowrap;width:100%;}
+  .tile.green{--tc:var(--state-ok);--trgb:79,214,155;}
+  .tile.soon{--tc:var(--text-tertiary);--trgb:150,205,220;opacity:.82;}
+  .tile.soon:hover{opacity:1;}
+  .tile.soon .t-dot{background:var(--text-tertiary);box-shadow:none;}
+
+  /* ============ 中央机器人光环 ============ */
+  .core{position:absolute;left:50%;top:470px;transform:translate(-50%,-50%);width:520px;height:520px;z-index:3;pointer-events:none;}
+  .core .halo{position:absolute;left:50%;top:50%;border-radius:50%;transform:translate(-50%,-50%);}
+  .halo.h1{width:510px;height:510px;border:1px dashed rgba(111,220,234,.28);animation:spin 60s linear infinite;}
+  .halo.h2{width:470px;height:470px;border:2px solid transparent;border-top-color:var(--brand-cyan);
+    border-right-color:rgba(111,220,234,.35);animation:spin 16s linear infinite;opacity:.85;
+    box-shadow:0 0 26px rgba(111,220,234,.16);}
+  .halo.h3{width:430px;height:430px;border:1px solid rgba(111,220,234,.18);border-bottom-color:rgba(79,214,155,.5);
+    animation:spin 26s linear infinite reverse;}
+  .halo.h4{width:386px;height:386px;background:radial-gradient(circle,rgba(111,220,234,.14),rgba(11,44,71,.2) 62%,transparent 72%);}
+  .halo.h4::before{content:"";position:absolute;inset:6px;border-radius:50%;border:1px solid rgba(111,220,234,.32);
+    box-shadow:0 0 30px rgba(111,220,234,.22) inset;}
+  .core .ticks{position:absolute;left:50%;top:50%;width:492px;height:492px;transform:translate(-50%,-50%);
+    border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(111,220,234,.5) 0deg 1deg,transparent 1deg 9deg);
+    -webkit-mask:radial-gradient(circle,transparent 0 240px,#000 240px 246px,transparent 246px);
+    mask:radial-gradient(circle,transparent 0 240px,#000 240px 246px,transparent 246px);
+    opacity:.55;animation:spin 90s linear infinite;}
+  .core .robot{position:absolute;left:50%;top:47%;transform:translate(-50%,-50%);width:300px;height:300px;
+    object-fit:contain;filter:drop-shadow(0 12px 28px rgba(0,0,0,.45)) drop-shadow(0 0 20px rgba(111,220,234,.4));
+    animation:float 5s ease-in-out infinite;}
+  .core .pedestal{position:absolute;left:50%;top:79%;transform:translateX(-50%);width:250px;height:26px;border-radius:50%;
+    background:radial-gradient(ellipse,rgba(111,220,234,.5),transparent 68%);filter:blur(5px);animation:pulse 4s ease-in-out infinite;}
+  .core-caption{position:absolute;left:50%;top:772px;transform:translateX(-50%);text-align:center;z-index:3;width:640px;}
+  .core-caption h2{font-size:27px;letter-spacing:5px;font-weight:700;
+    background:linear-gradient(180deg,#FFFFFF,#9BE9F3);-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;filter:drop-shadow(0 0 12px rgba(111,220,234,.4));}
+  .core-caption .line{width:360px;height:1px;margin:16px auto 0;
+    background:linear-gradient(90deg,transparent,var(--brand-cyan),transparent);}
+
+  /* ============ 建设中弹窗 ============ */
+  .mask{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;
+    background:rgba(6,26,48,.7);backdrop-filter:blur(4px);}
+  .mask.on{display:flex;animation:fade .2s ease;}
+  .dialog{width:470px;padding:34px 30px 28px;text-align:center;border:1px solid rgba(111,220,234,.55);border-radius:4px;
+    background:linear-gradient(180deg,rgba(24,74,113,.95),rgba(11,44,71,.96));
+    box-shadow:0 0 50px rgba(0,0,0,.55),0 0 30px rgba(111,220,234,.16) inset;position:relative;}
+  .dialog::before,.dialog::after{content:"";position:absolute;width:18px;height:18px;border:2px solid var(--brand-cyan);}
+  .dialog::before{left:-1px;top:-1px;border-right:0;border-bottom:0;}
+  .dialog::after{right:-1px;bottom:-1px;border-left:0;border-top:0;}
+  .dialog .d-ic{width:74px;height:74px;margin:0 auto 18px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    border:2px solid rgba(111,220,234,.6);background:radial-gradient(circle,rgba(111,220,234,.2),transparent);
+    box-shadow:0 0 22px rgba(111,220,234,.25) inset;}
+  .dialog .d-ic svg{width:38px;height:38px;}
+  .dialog h3{font-size:24px;letter-spacing:3px;color:var(--text-primary);}
+  .dialog p{margin-top:12px;font-size:14px;color:var(--text-secondary);line-height:1.8;}
+  .dialog .d-name{margin-top:14px;padding:8px 12px;font-size:13px;color:var(--brand-cyan);
+    border:1px dashed rgba(111,220,234,.35);background:rgba(111,220,234,.06);border-radius:3px;}
+  .dialog button{margin-top:24px;padding:9px 36px;font-size:14px;letter-spacing:2px;
+    color:var(--text-primary);border:1px solid var(--brand-cyan);border-radius:3px;
+    background:linear-gradient(180deg,rgba(62,134,180,.7),rgba(16,58,92,.7));transition:filter .2s;}
+  .dialog button:hover{filter:brightness(1.25);}
+
+  @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg);}}
+  @keyframes float{0%,100%{transform:translate(-50%,-50%) translateY(0);}50%{transform:translate(-50%,-50%) translateY(-12px);}}
+  @keyframes pulse{0%,100%{opacity:.55;transform:translateX(-50%) scale(1);}50%{opacity:.9;transform:translateX(-50%) scale(1.1);}}
+  @keyframes fade{from{opacity:0;}to{opacity:1;}}
+</style>
+</head>
+<body>
+<div id="stage">
+  <header>
+    <div class="hd-left"><img class="hd-logo" src="Commanding%20_screens/assets/images/1024x1024.png" alt="logo"></div>
+    <div class="hd-title">脉动智能产线<span>·</span>数字孪生调度指挥中心</div>
+    <div class="hd-right">
+      <b id="hdClock">15:39:52</b><span id="hdDate">2026/11/18</span>
+    </div>
+  </header>
+
+  <!-- 左上：指挥中心（指挥大屏 + 8 个运营模块） -->
+  <section class="panel cmd">
+    <div class="p-head"><i class="dia"></i>指挥中心</div>
+    <div class="p-body">
+      <div class="hero-entry" data-href="Commanding%20_screens/pages/指挥大屏.html">
+        <span class="h-ic">
+          <img src="Commanding%20_screens/assets/大屏总览图标/ic_指挥大屏.png" alt="指挥大屏">
+        </span>
+        <h2>指挥大屏</h2>
+        <span class="h-dot"></span>
+      </div>
+      <div class="module-grid" id="moduleGrid"></div>
+    </div>
+  </section>
+
+  <!-- 左下：参观屏 -->
+  <section class="panel visit">
+    <div class="p-head"><i class="dia"></i>参观屏</div>
+    <div class="p-body"><div class="square-grid" id="gridVisit"></div></div>
+  </section>
+
+  <!-- 右侧：生产屏（整铺） -->
+  <section class="panel prod">
+    <div class="p-head"><i class="dia"></i>生产屏</div>
+    <div class="p-body"><div class="square-grid" id="gridProd"></div></div>
+  </section>
+
+  <!-- 中央机器人光环 -->
+  <div class="core">
+    <div class="halo h1"></div>
+    <div class="halo h2"></div>
+    <div class="halo h3"></div>
+    <div class="halo h4"></div>
+    <div class="ticks"></div>
+    <img class="robot" src="Commanding%20_screens/assets/images/机器人.png" alt="智能机器人">
+    <div class="pedestal"></div>
+  </div>
+  <div class="core-caption">
+    <h2>智造未来 · 一屏统览</h2>
+    <div class="line"></div>
+  </div>
+
+  <!-- 建设中弹窗 -->
+  <div class="mask" id="mask">
+    <div class="dialog">
+      <div class="d-ic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--brand-cyan)" stroke-width="1.6"><path d="M12 2l8 4.5v9L12 20l-8-4.5v-9L12 2z"/><path d="M12 7v5l4 2"/><circle cx="12" cy="12" r="1.4" fill="var(--brand-cyan)" stroke="none"/></svg>
+      </div>
+      <h3>功能建设中，敬请期待</h3>
+      <p>该大屏正在规划开发中，<br>我们将尽快与您见面。</p>
+      <div class="d-name" id="dlgName">—</div>
+      <button id="dlgOk">我知道了</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 3D 图标素材（透明底）
+  const IC_BASE='Commanding%20_screens/assets/大屏总览图标/';
+  const ICON_VISIT_IMG=IC_BASE+'ic_参观屏.png';
+  const ICON_PROD_IMGS=[IC_BASE+'ic_生产屏1.png',IC_BASE+'ic_生产屏2.png',IC_BASE+'ic_生产屏3.png'];
+  const ICON_SUB_IMG=IC_BASE+'ic_指挥屏子项.png';
+  const imgIc=src=>`<img src="${src}" alt="">`;
+
+  // 8 个运营模块（点击进指挥大屏）—— 统一用「指挥屏子项」图标
+  const MODULES=[
+    {n:'工厂产能'},{n:'工厂订单'},
+    {n:'质量管控'},{n:'设备监控'},
+    {n:'智能仓库'},{n:'物流运输'},
+    {n:'绿色低碳'},{n:'安全生产'}
+  ];
+  document.getElementById('moduleGrid').innerHTML=MODULES.map(m=>`
+    <button class="tile" data-href="Commanding%20_screens/pages/指挥大屏.html" title="进入指挥大屏 · ${m.n}">
+      <span class="t-ic">${imgIc(ICON_SUB_IMG)}</span><span class="t-tx">${m.n}</span>
+    </button>`).join('');
+
+  // 18 个大屏数据
+  const ENTRIES=[
+    {id:1,  name:'指挥大屏', group:'cmd'},
+    {id:2,  name:'钢筋网片工作站生产屏', group:'prod', href:'Production%20_screens/pages/钢筋网片工作站生产屏.html', live:true},
+    {id:3,  name:'地板混凝土平整作站生产屏', group:'prod', href:'Production%20_screens/pages/地板混凝土平整作站生产屏.html', live:true},
+    {id:4,  name:'地砖铺贴作站生产屏', group:'prod', href:'Production%20_screens/pages/地砖铺贴作站生产屏.html', live:true},
+    {id:5,  name:'墙面腻子喷涂作站生产屏', group:'prod'},
+    {id:6,  name:'墙面腻子打磨作站生产屏', group:'prod'},
+    {id:7,  name:'墙面底漆喷涂作站生产屏', group:'prod'},
+    {id:8,  name:'墙板拼装作站生产屏', group:'prod', href:'Production%20_screens/pages/墙板拼装生产大屏.html', live:true},
+    {id:9,  name:'墙板焊接作站生产屏', group:'prod'},
+    {id:10, name:'窗框打发泡胶工作站生产屏', group:'prod'},
+    {id:11, name:'窗框打密封胶工作站生产屏', group:'prod'},
+    {id:12, name:'顶板安装作站生产屏', group:'prod'},
+    {id:13, name:'墙板拼装参观屏', group:'visit', href:'visit_screens/pages/墙板拼接工作站参观大屏.html', live:true},
+    {id:14, name:'墙板焊接参观屏', group:'visit'},
+    {id:15, name:'腻子喷涂参观屏', group:'visit'},
+    {id:16, name:'混凝土浇筑整平参观屏', group:'visit'},
+    {id:17, name:'门框窗框打胶参观屏', group:'visit'},
+    {id:18, name:'腻子打磨参观屏', group:'visit'}
+  ];
+  function renderTiles(gridId,list,icons,firstGreen){
+    document.getElementById(gridId).innerHTML=list.map((e,i)=>`
+      <button class="tile ${e.live?'':'soon'}${firstGreen&&i%2?' green':''}" data-name="${e.name}" ${e.live?`data-href="${e.href}"`:''}>
+        <span class="t-dot"></span>
+        <span class="t-ic">${imgIc(Array.isArray(icons)?icons[i%icons.length]:icons)}</span>
+        <span class="t-tx">${e.name}</span>
+      </button>`).join('');
+  }
+  renderTiles('gridProd',ENTRIES.filter(e=>e.group==='prod'),ICON_PROD_IMGS[0],false);
+  renderTiles('gridVisit',ENTRIES.filter(e=>e.group==='visit'),ICON_VISIT_IMG,true);
+
+  // 点击入口：已上线跳转，否则弹窗
+  const mask=document.getElementById('mask');
+  document.getElementById('stage').addEventListener('click',ev=>{
+    const el=ev.target.closest('[data-href],.tile.soon,.hero-entry');
+    if(!el) return;
+    if(el.dataset.href){ window.open(el.dataset.href,'_blank'); return; }
+    if(el.classList.contains('soon')){
+      document.getElementById('dlgName').textContent=el.dataset.name;
+      mask.classList.add('on');
+    }
+  });
+  document.getElementById('dlgOk').addEventListener('click',()=>mask.classList.remove('on'));
+  mask.addEventListener('click',ev=>{ if(ev.target===mask) mask.classList.remove('on'); });
+  document.addEventListener('keydown',ev=>{ if(ev.key==='Escape') mask.classList.remove('on'); });
+
+  function tick(){
+    const d=new Date(),p=n=>String(n).padStart(2,'0');
+    document.getElementById('hdClock').textContent=`${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+    document.getElementById('hdDate').textContent=`${d.getFullYear()}/${p(d.getMonth()+1)}/${p(d.getDate())}`;
+  }
+  tick(); setInterval(tick,1000);
+  function fit(){ document.getElementById('stage').style.setProperty('--s',Math.min(innerWidth/1920,innerHeight/1080)); }
+  window.addEventListener('resize',fit); fit();
+</script>
+</body>
+</html>

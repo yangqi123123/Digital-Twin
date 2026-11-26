@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="aUOPWgIh1aFnWsH8DTBz66" style="--s: 0.43072916666666666;" data-dm-ref="2"><head></head><body data-page-node-id="bnUjD8JYhHeESo7GvYQbbA" style="">﻿
+<style id="__dm_no_drag_style__">* { -webkit-user-drag: none !important; }</style><style id="__dm_bindable_badge_style__">[data-sp-bindable="database"]{outline:1px dashed #0088ff;outline-offset:2px;border-radius:4px;}[data-sp-bindable="database"] *{pointer-events:none !important;transition:none !important;animation:none !important;}[data-sp-bindable="database"]{transition:none !important;animation:none !important;}</style>﻿
+
+
+<meta charset="UTF-8" data-page-node-id="EDg4ImKGpDc1s8Eiq5jrnS">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="n7HQKH2WcVejIFAwRPbfui">
+<title>墙板拼装工作站 · 脉动智能产线</title>
+<style>
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    /* 设计令牌 · 对齐《组件与视觉规范》：换风格只换此组值，业务代码不动 */
+    --brand-cyan:#6FDCEA;
+    --bg-topbar:#1C4670; --bg-page:#0E3862; --bg-mid:#173F63; --bg-stage:#0B2C47; --bg-stage-2:#123A5C;
+    --bg-panel:rgba(27,72,110,.55); --bg-elevated:#123A5C; --bg-mask:rgba(6,26,48,.72);
+    --border-base:rgba(150,205,220,.42); --border-soft:rgba(150,205,220,.22);
+    --text:#EAF6FF; --text-secondary:#BFD4E2; --text-tertiary:#8FAFC2; --neutral:#A7C0CE; --on-cyan:#04162F;
+    --success:#4FD69B; --success-deep:#2E9E72; --warning:#F0B75A; --danger:#FF5D6C; --info:#6FDCEA;
+    --chart-1:#6FDCEA; --chart-2:#3E86B4; --chart-3:#4FD69B; --chart-4:#F0B75A;
+    --chart-track:rgba(111,220,234,.13); --glow:rgba(111,220,234,.5);
+  }
+  html,body{width:100%;height:100%;background:var(--bg-page);overflow:hidden;
+    font-family:"Microsoft YaHei","PingFang SC","Source Han Sans SC",sans-serif;color:var(--text);}
+  #stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;
+    transform-origin:center center;transform:translate(-50%,-50%) scale(var(--s,1));}
+  #screen{position:absolute;inset:0;display:flex;flex-direction:column;
+    padding:0 24px 18px;
+    background:
+      url('../assets/images/header-bg.png') center -12px / 100% auto no-repeat,
+      radial-gradient(1200px 600px at 50% -10%,rgba(96,178,206,.20),transparent 70%),
+      radial-gradient(900px 500px at 100% 100%,rgba(6,26,48,.38),transparent 70%),
+      linear-gradient(180deg,var(--bg-topbar) 0%,var(--bg-mid) 46%,var(--bg-page) 100%);
+    overflow:hidden;}
+  #screen::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:linear-gradient(rgba(150,205,220,.055) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(150,205,220,.055) 1px,transparent 1px);
+    background-size:44px 44px;}
+  #screen::after{content:"";position:absolute;left:0;right:0;top:0;height:3px;
+    background:linear-gradient(90deg,transparent,var(--brand-cyan),transparent);opacity:.8;}
+
+  /* ---------- header ---------- */
+  header{height:64px;flex:0 0 64px;display:flex;align-items:center;justify-content:space-between;
+    position:relative;z-index:2;padding:0 12px;}
+  .hd-left{display:flex;align-items:center;gap:12px;font-size:16px;letter-spacing:.5px;color:var(--text-secondary);
+    position:relative;z-index:1;}
+  .logo{width:40px;height:40px;aspect-ratio:1/1;object-fit:contain;object-position:center;
+    display:none;flex:0 0 40px;max-width:none;max-height:none;}
+  .hd-title{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font-size:32px;font-weight:700;letter-spacing:4px;
+    color:var(--text);z-index:1;}
+  .hd-title span{color:var(--brand-cyan);margin:0 8px;font-weight:400;font-size:20px;}
+  .hd-right{text-align:right;font-size:16px;color:var(--text-secondary);line-height:1.5;position:relative;z-index:1;}
+  .hd-right b{color:var(--text);font-size:20px;letter-spacing:.5px;}
+
+  /* ---------- layout ---------- */
+  .main{flex:1;display:flex;gap:16px;padding-top:8px;position:relative;z-index:2;min-height:0;}
+  .col-left{flex:1 1 0;display:flex;flex-direction:column;gap:12px;min-width:0;}
+  .col-right{flex:0 0 620px;display:flex;flex-direction:column;gap:12px;}
+  .panel{position:relative;background:var(--bg-panel);border:1px solid var(--border-base);border-radius:2px;
+    display:flex;flex-direction:column;min-height:0;}
+  .panel::before,.panel::after{content:"";position:absolute;width:14px;height:14px;border:2px solid var(--brand-cyan);}
+  .panel::before{left:-1px;top:-1px;border-right:0;border-bottom:0;}
+  .panel::after{right:-1px;bottom:-1px;border-left:0;border-top:0;}
+  .p-head{flex:0 0 40px;display:flex;align-items:center;gap:8px;padding:0 16px;
+    border-bottom:1px solid var(--border-soft);font-size:18px;font-weight:600;letter-spacing:.5px;overflow:visible;}
+  .p-head .dia{width:8px;height:8px;flex:0 0 8px;margin:0 2px;background:var(--brand-cyan);transform:rotate(45deg);
+    filter:drop-shadow(0 0 4px var(--glow));}
+  .p-head .sub{margin-left:auto;font-size:12px;color:var(--text-secondary);font-weight:400;}
+  .p-body{flex:1;padding:16px;min-height:0;overflow:hidden;}
+
+  /* ---------- table ---------- */
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th{background:rgba(130,195,215,.20);color:var(--text-secondary);font-weight:600;height:38px;padding:0 8px;
+    border:1px solid var(--border-soft);text-align:center;white-space:nowrap;}
+  td{padding:8px;border:1px solid var(--border-soft);text-align:center;color:var(--text-secondary);}
+  tbody tr:nth-child(even){background:rgba(255,255,255,.05);}
+  tbody tr:hover{background:rgba(111,220,234,.10);}
+  .tag{display:inline-block;padding:2px 8px;border-radius:2px;font-size:12px;}
+  .t-ok{background:rgba(79,214,155,.16);color:var(--success);border:1px solid rgba(79,214,155,.4);}
+  .t-run{background:rgba(111,220,234,.16);color:var(--info);border:1px solid rgba(111,220,234,.45);}
+  .t-wait{background:rgba(240,183,90,.14);color:var(--warning);border:1px solid rgba(240,183,90,.4);}
+  .t-err{background:rgba(255,93,108,.16);color:var(--danger);border:1px solid rgba(255,93,108,.45);}
+  /* 任务清单：进度条 / 当前行高亮 */
+  tr.cur td{background:rgba(111,220,234,.12)!important;color:var(--text);}
+  td.pc{min-width:118px;padding:4px 8px;}
+  td.pc span{display:block;font-size:14px;letter-spacing:.5px;}
+  td.stage{color:var(--info);}
+  /* 任务清单：固定行高，保证三条工单完整可见 */
+  #taskBody tr{height:58px;}
+  #taskBody td{padding:4px 8px;vertical-align:middle;}
+  .pbar{margin-top:4px;height:8px;border-radius:4px;background:var(--chart-track);overflow:hidden;}
+  .pbar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--chart-2),var(--chart-1));
+    box-shadow:0 0 8px var(--glow);}
+  .pbar.g i{background:linear-gradient(90deg,var(--success-deep),var(--success));box-shadow:0 0 8px rgba(79,214,155,.45);}
+
+  /* ---------- 当前工序 ---------- */
+  .proc{flex:1 1 auto;min-height:0;}
+  .proc-meta{display:flex;align-items:center;gap:24px;font-size:16px;color:var(--text-secondary);padding:0 0 8px;}
+  .proc-meta b{color:var(--text);font-size:20px;margin:0 4px;}
+  #projName{color:var(--text-secondary);font-weight:400;font-size:16px;}
+  .proc-meta .ok{color:var(--success);}
+  .proc-meta .warn{color:var(--warning);}
+  .proc-meta .right{margin-left:auto;display:flex;align-items:center;gap:24px;font-size:16px;}
+  .proc-meta .right b{color:var(--brand-cyan);}
+  .stage-img{position:relative;flex:1;min-height:0;border:1px solid var(--border-soft);border-radius:2px;
+    background:var(--bg-stage);overflow:hidden;}
+  .stage-img .shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;
+    filter:saturate(.85) contrast(1.05);transform:scale(1.02);transform-origin:center;}
+  .stage-img .shot-bg{position:absolute;inset:-6%;width:112%;height:112%;object-fit:cover;display:block;
+    filter:blur(26px) saturate(.7) brightness(.7);opacity:.55;}
+  /* 深蓝遮罩：上下左右虚化，中间透明 */
+  .stage-img .veil{position:absolute;inset:0;pointer-events:none;z-index:3;
+    background:
+      linear-gradient(180deg,rgba(11,44,71,.46) 0%,rgba(14,52,80,.24) 8%,rgba(16,58,88,.02) 20%,rgba(16,58,88,0) 30%,rgba(16,58,88,0) 70%,rgba(16,58,88,.03) 80%,rgba(12,46,74,.26) 92%,rgba(9,38,64,.46) 100%),
+      linear-gradient(90deg,rgba(11,44,71,.40) 0%,rgba(14,52,80,.20) 9%,rgba(16,58,88,.02) 24%,rgba(16,58,88,0) 34%,rgba(16,58,88,0) 66%,rgba(16,58,88,.02) 76%,rgba(12,46,74,.22) 91%,rgba(9,38,64,.40) 100%);}
+  .stage-img .veil-2{position:absolute;inset:0;pointer-events:none;z-index:3;
+    background:radial-gradient(ellipse 76% 70% at 50% 50%,rgba(16,58,88,0) 58%,rgba(12,48,76,.10) 82%,rgba(8,34,58,.28) 100%);
+    box-shadow:inset 0 0 40px 4px rgba(9,38,64,.26);}
+  .stage-img .veil-3{position:absolute;inset:0;pointer-events:none;z-index:4;
+    background:linear-gradient(180deg,rgba(20,150,205,.05),rgba(8,52,80,.12));mix-blend-mode:multiply;}
+  .stage-img .veil-glow{position:absolute;inset:0;pointer-events:none;z-index:4;
+    background:radial-gradient(ellipse 40% 42% at 50% 50%,rgba(111,220,234,.12),rgba(111,220,234,0) 70%);}
+  .stage-img .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;
+    color:var(--neutral);font-size:24px;letter-spacing:2px;z-index:5;pointer-events:none;
+    text-shadow:0 0 12px rgba(9,38,64,.95);}
+  .stage-img .ph small{display:block;margin-top:8px;font-size:14px;color:var(--text-tertiary);letter-spacing:.5px;}
+  .steps{flex:0 0 auto;display:flex;gap:12px;margin-top:12px;}
+  .step{flex:1;height:56px;border:1px solid var(--border-soft);border-radius:4px;display:flex;
+    align-items:center;justify-content:center;gap:8px;font-size:16px;color:var(--neutral);cursor:pointer;
+    background:linear-gradient(180deg,rgba(18,62,92,.35),rgba(12,50,76,.2));position:relative;}
+  .step .n{width:24px;height:24px;border-radius:50%;border:1px solid var(--border-base);display:flex;
+    align-items:center;justify-content:center;font-size:12px;color:var(--text-tertiary);}
+  .step.done{color:var(--success);border-color:rgba(79,214,155,.45);}
+  .step.done .n{border-color:rgba(79,214,155,.6);color:var(--success);}
+  .step.active{border-color:var(--brand-cyan);color:var(--text);box-shadow:0 0 18px var(--glow) inset,0 0 12px rgba(111,220,234,.25);
+    background:linear-gradient(180deg,rgba(62,134,180,.45),rgba(10,45,110,.4));}
+  .step.active .n{border-color:var(--brand-cyan);background:var(--brand-cyan);color:var(--on-cyan);}
+  .footbar{flex:0 0 44px;display:flex;align-items:center;justify-content:space-between;
+    font-size:16px;color:var(--text-secondary);margin-top:12px;}
+  .footbar .nav{padding:8px 20px;border:none;border-radius:4px;color:var(--brand-cyan);}
+
+  /* ---------- 人员信息 ---------- */
+  .ppl-list{flex:1 1 auto;min-height:0;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:12px;
+    align-content:start;scrollbar-width:none;-ms-overflow-style:none;}
+  .ppl-list::-webkit-scrollbar{display:none;}
+  .ppl-card{border:1px solid var(--border-soft);border-radius:2px;padding:16px;
+    background:linear-gradient(180deg,rgba(130,195,215,.10),rgba(130,195,215,.03));
+    display:flex;flex-direction:column;gap:12px;
+    animation:pplIn .5s ease-in-out both;will-change:transform,opacity;}
+  .ppl-card .pc-top{display:flex;align-items:center;gap:12px;}
+  .ppl-card .pc-avatar{width:48px;height:48px;border-radius:50%;flex:0 0 48px;
+    background:linear-gradient(135deg,var(--chart-2),var(--chart-1));color:var(--on-cyan);font-weight:700;
+    display:flex;align-items:center;justify-content:center;font-size:20px;
+    box-shadow:0 0 12px var(--glow);}
+  .ppl-card .pc-avatar-img{width:48px;height:48px;border-radius:50%;flex:0 0 48px;object-fit:cover;
+    box-shadow:0 0 12px var(--glow);border:1px solid rgba(111,220,234,.4);}
+  .ppl-card .pc-info{display:flex;flex-direction:column;gap:4px;min-width:0;}
+  .ppl-card .pc-name{font-size:16px;font-weight:600;color:var(--text);line-height:1.2;}
+  .ppl-card .pc-tags{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .ppl-card .pc-tag{font-size:12px;padding:2px 8px;border-radius:2px;color:var(--text-secondary);
+    border:1px solid var(--border-soft);}
+  .ppl-card .pc-st{font-size:12px;color:var(--info);}
+  .ppl-card .pc-bottom{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--text-secondary);
+    border-top:1px solid var(--border-soft);padding-top:8px;}
+  .ppl-card .pc-row{display:flex;align-items:center;gap:8px;}
+  .ppl-card .pc-bottom .k{color:var(--text-tertiary);flex:0 0 auto;}
+  .ppl-card .pc-proc{color:var(--brand-cyan);font-weight:600;}
+  .ppl-card .pc-mat{margin-left:auto;font-size:12px;color:var(--neutral);}
+  .mat{font-size:12px;color:var(--neutral);}
+  .ppl-hint{flex:0 0 auto;text-align:center;font-size:12px;color:var(--text-tertiary);letter-spacing:.5px;padding:4px 0 0;}
+  /* 人员卡片轮播切换：向上缓动缓出（每次切页重建卡片时自动重放） */
+  @keyframes pplIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+  .ppl-card:nth-child(2){animation-delay:.06s;}
+  .ppl-hint b{color:var(--brand-cyan);font-weight:400;margin:0 4px;}
+  .headrow{font-size:12px;color:var(--text-secondary);padding:0 0 8px;display:flex;gap:12px;}
+  .headrow span{color:var(--text-secondary);}
+
+  /* ---------- 告警 ---------- */
+  .alarm-wrap{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .alarm-list{flex:1;overflow:hidden;position:relative;}
+  .alarm-list .track{position:absolute;left:0;right:0;top:0;transition:transform .6s cubic-bezier(.4,0,.2,1);}
+  .alarm{position:relative;border:1px solid var(--border-soft);border-left:3px solid var(--warning);border-radius:2px;
+    padding:8px 12px;margin-bottom:8px;background:linear-gradient(90deg,rgba(240,183,90,.10),rgba(18,62,92,.18));}
+  .alarm.crit{border-left-color:var(--danger);background:linear-gradient(90deg,rgba(255,93,108,.13),rgba(18,62,92,.18));}
+  .alarm.info{border-left-color:var(--chart-2);background:linear-gradient(90deg,rgba(62,134,180,.10),rgba(18,62,92,.15));}
+  .alarm.on{box-shadow:0 0 14px var(--glow);border-color:var(--brand-cyan);}
+  .alarm .r1{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text);}
+  .alarm .lv{font-size:12px;padding:2px 8px;border-radius:2px;}
+  .alarm .lv.crit{background:rgba(255,93,108,.18);color:var(--danger);border:1px solid rgba(255,93,108,.45);}
+  .alarm .lv.warn{background:rgba(240,183,90,.16);color:var(--warning);border:1px solid rgba(240,183,90,.45);}
+  .alarm .lv.info{background:rgba(62,134,180,.16);color:var(--info);border:1px solid rgba(62,134,180,.4);}
+  .alarm .dev{margin-left:auto;font-size:12px;color:var(--neutral);}
+  .alarm .r2{margin-top:4px;font-size:14px;color:var(--text-secondary);line-height:1.5;}
+  .alarm .r3{margin-top:4px;font-size:12px;color:var(--neutral);}
+  .alarm .pulse{position:absolute;right:10px;bottom:8px;width:7px;height:7px;border-radius:50%;
+    background:var(--danger);box-shadow:0 0 8px var(--danger);animation:bl 1s infinite;}
+  .alarm .pulse.w{background:var(--warning);box-shadow:0 0 8px var(--warning);}
+  @keyframes bl{0%,100%{opacity:1}50%{opacity:.25}}
+  .dots{display:flex;gap:8px;justify-content:center;margin-top:4px;}
+  .dots i{width:7px;height:7px;border-radius:50%;background:rgba(120,160,210,.35);}
+  .dots i.on{background:var(--brand-cyan);box-shadow:0 0 8px var(--brand-cyan);}
+
+  /* ---------- 良品率 ---------- */
+  .kpis{display:flex;gap:12px;margin-bottom:8px;}
+  .kpi{flex:1;border:1px solid var(--border-soft);border-radius:2px;padding:8px 12px;
+    background:linear-gradient(180deg,rgba(62,134,180,.18),rgba(12,50,76,.15));}
+  .kpi .l{font-size:12px;color:var(--text-secondary);}
+  .kpi .v{font-size:24px;font-weight:700;color:var(--brand-cyan);text-shadow:0 0 12px var(--glow);}
+  .kpi .v small{font-size:12px;color:var(--neutral);margin-left:4px;font-weight:400;}
+  .kpi.g .v{color:var(--success);text-shadow:0 0 12px rgba(79,214,155,.45);}
+  .legend{display:flex;gap:16px;font-size:12px;color:var(--neutral);margin-bottom:4px;}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;}
+  .legend .lg-plan{background:var(--chart-2);}
+  .legend .lg-act{background:var(--chart-1);}
+  .legend .lg-rate{background:var(--success);border-radius:50%;width:8px;height:8px;}
+  .chart{flex:1;min-height:0;}
+  .chart svg{width:100%;height:100%;display:block;}
+</style>
+
+
+<div id="stage" data-page-node-id="XdAcmA0ofQ0FCaO1Kmhr7t">
+ <div id="screen" data-page-node-id="yRMa5Lp8NwTE9g07ayRVlu">
+  <header data-page-node-id="FCFLOACPfAOExFE4rUGeKA">
+    <div class="hd-left" data-page-node-id="uM4sKRl577vV7YGtv5tnBD"><img class="logo" src="../assets/images/logo.png" width="40" height="40" alt="中建四局模块建筑科技公司" data-page-node-id="logoImg"></div>
+    <div class="hd-title" data-page-node-id="tYfpZrYBiNg9DLTObpH6LE">脉动智能产线<span data-page-node-id="w1QwfqUHzBXFJ7RLPt5SoK">·</span>墙板拼装工作站</div>
+    <div class="hd-right" data-page-node-id="GnXMNfVr5m2fvaA0zE9ng0"><div data-page-node-id="reW9k1fAJzEbLAFhJwyH43"><b id="clock" data-page-node-id="BZaHWEnFQNhJpWS2zCZdBA">16:29:00</b>　<span id="date" data-page-node-id="GUcBOBXBokV2KUgJXpTSB5">2026/10/28</span></div><div id="week" data-page-node-id="QE0xhzmnhrThUEoWobSDrC"></div></div>
+  </header>
+
+  <div class="main" data-page-node-id="RVId56hSGheAmBakVjLjfM">
+    <!-- 左列 -->
+    <div class="col-left" data-page-node-id="DGFUb31Fng4cBBN9dq5uZT">
+      <div class="panel" style="flex:0 0 282px;" data-page-node-id="EOEDEUDb2pla1RGIrdXxkY">
+        <div class="p-head" data-page-node-id="3N8vEu04AM64VnXFpz79sM"><i class="dia" data-page-node-id="6gdkTIE3kmleB5UkVNUHI8"></i>工位任务清单<span class="sub" id="taskSub" data-page-node-id="Cc0m0sk2mq5hdSzxa07s1o">今日工单 3 单 · 执行中 2 单 · 前序工序已完成 33.3%</span></div>
+        <div class="p-body" data-page-node-id="NbwFbI8DdzbCwP6G3jzVhE">
+          <table data-page-node-id="BO0QlpHA1ZAr0H8vEYv3bZ">
+            <thead data-page-node-id="jWKGj9913nt9gkGDDCtFaF"><tr data-page-node-id="3gYf29YCVWxG2UiLphgqoB"><th data-page-node-id="e8nzt7QtEayYNclAD79QbM">工单编号</th><th data-page-node-id="P8IdNTAJqqDiUnaHPJ2RvO">项目名称</th><th data-page-node-id="n1">模块编号</th><th data-page-node-id="77TGoTZl9pWfw7z9cKr8B0">生产任务</th><th data-page-node-id="durCol">任务时长</th><th data-page-node-id="n2">当前工序</th><th data-page-node-id="ilYWnJUTP5eIKRgbC7E0bp">任务进度</th><th data-page-node-id="n3">模块整体完成</th><th data-page-node-id="jhJF9mKjHv1drwYkV9Cf0o">工单状态</th></tr></thead>
+            <tbody id="taskBody" data-page-node-id="U1U5PS2UeHmw1nSbAHAz9h"><tr class="">
+     <td>JD-AZ-102801</td><td>XX模块项目1028号</td><td>M-01</td><td>墙板拼装</td><td class="stage">多点焊接</td>
+     <td class="pc"><span>72%</span><div class="pbar "><i style="width:72%"></i></div></td>
+     <td class="pc"><span>45.3%</span><div class="pbar g"><i style="width:45.3%"></i></div></td>
+     <td><span class="tag t-run">执行中</span></td></tr><tr class="cur">
+     <td>JD-AZ-102802</td><td>XX模块项目1028号</td><td>M-02</td><td>墙板拼装</td><td class="stage">视觉定位</td>
+     <td class="pc"><span>30%</span><div class="pbar "><i style="width:30%"></i></div></td>
+     <td class="pc"><span>38.3%</span><div class="pbar g"><i style="width:38.3%"></i></div></td>
+     <td><span class="tag t-run">执行中</span></td></tr><tr class="">
+     <td>JD-AZ-102803</td><td>XX模块项目1028号</td><td>M-03</td><td>墙板拼装</td><td class="stage">待上料</td>
+     <td class="pc"><span>0%</span><div class="pbar "><i style="width:0%"></i></div></td>
+     <td class="pc"><span>33.3%</span><div class="pbar g"><i style="width:33.3%"></i></div></td>
+     <td><span class="tag t-wait">待执行</span></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel proc" data-page-node-id="csFRx9JyHtHxiq1ZkQAf3R">
+        <div class="p-head" data-page-node-id="REinkYutx3PypJKAYEvrmR"><i class="dia" data-page-node-id="8zxe8OpZ8ID03Th4iL88He"></i>当前工序：<span id="procName" data-page-node-id="gBMfaGel07pSWOTMO1sBwQ">03 墙板整体拼装</span><span class="sub" data-page-node-id="Do9XkMeDN9EA3kZ0hgBiGL">工位 SC-01　墙板拼装工作站</span></div>
+        <div class="p-body" style="display:flex;flex-direction:column;" data-page-node-id="VtLjqGt4O9Q1WaVzWFnsKF">
+          <div class="proc-meta" data-page-node-id="Kfzyw95AlUu1AtAmZYxtwg">
+            <span data-page-node-id="NcWAsJFkIuFBmoSy8MZIJh">项目名称：<b id="projName" data-page-node-id="LD6ZIS11Nx3recFfA3yyRh">XX模块项目1028号</b></span>
+            <span data-page-node-id="pMXNkQm556qI5jHGL83BFc">模块数：<b id="procMods" data-page-node-id="efOUEDdqlIpVZ8zckscWIE">3</b></span>
+            <span class="right" data-page-node-id="vogh149iTZxJXc9i2sRErJ"><span data-page-node-id="0HZGV8wZ5QDewB5r6MxVt5">任务时长：<b id="procDur" class="ok" data-page-node-id="S3nwNQhW71E9RGxJbQLjAk">16min 23s</b></span><span data-page-node-id="waU8W2CLTQCTgNbXTJiTMV">任务进度：<b id="procProg" class="warn" data-page-node-id="xlxEl78D9ykBy8P2H3y4gO">30%</b></span></span>
+          </div>
+          <div class="stage-img" data-page-node-id="ZHTh1raHhNzNA5CwAWuZMC">
+            
+            
+            
+            
+            
+            
+            <img data-page-node-id="NBm6V3KGn7kRAK8JjaRo4X" class="shot-bg" src="../assets/images/flow-3.png" alt="" aria-hidden="true" style="margin:0;padding:0;box-sizing:border-box;position:absolute;inset:-6%;width:112%;height:112%;object-fit:cover;display:block;filter:blur(26px) saturate(.7) brightness(.7);opacity:.55"><img data-page-node-id="jkUrltaRthdOF0TRJIkbf5" class="shot" src="../assets/images/flow-3.png" alt="墙板拼装工序流程图" style="margin:0;padding:0;box-sizing:border-box;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;filter:saturate(.85) contrast(1.05);transform:scale(1.02);transform-origin:center"><div data-page-node-id="0392OYJ4osWXSUzc5sfWCt" class="veil"></div><div data-page-node-id="ceKl6D5yZ0RWnYokZDmEE2" class="veil-2"></div><div data-page-node-id="HjrkpRwFHaLpNHoiqq0ga2" class="veil-3"></div><div data-page-node-id="EBhXzIPXhAmxfgCVjZ2UVB" class="veil-glow"></div><div class="ph" data-page-node-id="remuO7B6y0J1gt22uBiKA8"></div>
+          </div>
+          <div class="steps" id="steps" data-page-node-id="vW99YtJy2PCRsYq1D8M1Cy"><div class="step done"><span class="n">01</span>AGV自动上料</div><div class="step done"><span class="n">02</span>墙板吊装</div><div class="step active"><span class="n">03</span>墙板整体拼装</div><div class="step "><span class="n">04</span>内外焊缝焊接</div><div class="step "><span class="n">05</span>模台带模块流出</div></div>
+        </div>
+        <div class="footbar" data-page-node-id="CnH56eu5AruuJ6LGaYiSDH"><span class="nav" data-page-node-id="P9zqxgnlNrjIbymAjS0Joq">上一站：墙板构件准备</span><span class="nav" data-page-node-id="cq2zAUijLqNFHg2Zgjy3TA">下一站：墙板焊接</span></div>
+      </div>
+    </div>
+
+    <!-- 右列 -->
+    <div class="col-right" data-page-node-id="8q2AzuC1D0j6CHQ6x114cQ">
+      <!-- 人员信息 -->
+      <div class="panel" style="flex:0 0 280px;" data-page-node-id="FL4JwJ5BXVHW74DeZ5xK9m">
+        <div class="p-head" data-page-node-id="bcH7GZcAS76nIEw4Necz3U"><i class="dia" data-page-node-id="AD9b6fXjYAmVl4ocWWr34j"></i>人员信息<span class="sub" data-page-node-id="5wZaOgoHSutbYhpYOkon0O">责任班组 · 4 人</span></div>
+        <div class="p-body" style="display:flex;flex-direction:column;" data-page-node-id="j3D5oTPvJEoN3CF4H7Nn5v">
+          <div class="headrow" data-page-node-id="VMGhWzQuIJYwklEhBfVp5u" style="flex:0 0 auto;">当班班次：<span data-page-node-id="t7GA7apiiNhHbMrdwsrvir">早班 A（08:00-20:00）</span>　班组长：<span data-page-node-id="VA0QLZVWQMuq3WQ7lphjha">张乐</span>　在线：<span style="color:var(--success)" data-page-node-id="QBj2DjB7htjePY8KYDV9f8">4/4</span></div>
+          <div class="ppl-list" id="pplBody" data-page-node-id="EHWDbBIpqPcN3cdEscgkxP"></div>
+          <div class="ppl-hint" id="pplHint" data-page-node-id="pplHintNode"></div>
+        </div>
+      </div>
+
+      <!-- 月度良品率 -->
+      <div class="panel" style="flex:1 1 auto;" data-page-node-id="XLUNFpSMdrxbJBQj0tCgNG">
+        <div class="p-head" data-page-node-id="J6hQrmhDFX5XPjFyfXtTHO"><i class="dia" data-page-node-id="fg1e5XZJRxMxS5EDOY45QM"></i>月度良品率<span class="sub" id="monthSub" data-page-node-id="PSWINxQXRgI99XpJ1oF146">2026 年 10 月</span></div>
+        <div class="p-body" style="display:flex;flex-direction:column;" data-page-node-id="yGwfMs4ewrTtx9oN6pzC7z">
+          <div class="kpis" data-page-node-id="szyNMPGTXsbs7AiCBsImt4">
+            <div class="kpi" data-page-node-id="vnUjOQinV2mTutglluh5ja"><div class="l" data-page-node-id="rTNiODzOV3lttGSZ1l9DVq">月度计划产量</div><div class="v" id="kPlan" data-page-node-id="2GK3K1PHGM72AqiuUm9C4q">79<small>块</small></div></div>
+            <div class="kpi" data-page-node-id="a9zEOZwtFkioBz3xxxMIjb"><div class="l" data-page-node-id="EYOyHC7RJDUCq5NitdvjR3">月度实际产出</div><div class="v" id="kAct" data-page-node-id="ZG3HE0F4Tu1X2IvzM90o9l">75<small>块</small></div></div>
+            <div class="kpi g" data-page-node-id="x8iE9iQRr1euKjAR8MVoP1"><div class="l" data-page-node-id="wQzLxTYm8HNLX3ssOW4wpM">月度良品率</div><div class="v" id="kRate" data-page-node-id="MaHNaGimbvrAsVE4qzRB6G">97.77<small>%</small></div></div>
+          </div>
+          <div class="legend" data-page-node-id="WRh2lr5vwJwZ5z4SVO2Mnb">
+            <span data-page-node-id="MunwuBnoyx8nnxnSVJKJzS"><i class="lg-plan" data-page-node-id="Ma4wNewSr1ArGk2fayVz6D"></i>计划产出</span>
+            <span data-page-node-id="0TaXbxjvZpN1UoRBdT4XAB"><i class="lg-act" data-page-node-id="FUnD0HWQvWepknQsdlA5lm"></i>实际产出</span>
+            <span data-page-node-id="XFgu2aePjcLh3dUaU4hZft"><i class="lg-rate" data-page-node-id="xsiE7JVvoWZepBd7mNDpMz"></i>良品率</span>
+            <span style="margin-left:auto;color:var(--neutral)" data-page-node-id="dz7zytaTj6g6WqPAU4J0WH">单位：块 / %</span>
+          </div>
+          <div class="chart" id="chart" data-page-node-id="mUxhJghL47PlFEpKW7ha5E"><svg viewBox="0 0 1180 330" preserveAspectRatio="none"></svg></div>
+        </div>
+      </div>
+
+      <!-- 故障告警 -->
+      <div class="panel" style="flex:0 0 350px;" data-page-node-id="JEjxBjqhwjTcEmcfdJ0UzL">
+        <div class="p-head" data-page-node-id="gysOEeyN2UGquxYMaT5HoV"><i class="dia" data-page-node-id="q4uVdZdxuaZIHtfQRtUMDU"></i>故障告警<span class="sub" id="alarmSub" data-page-node-id="CbHO0IXiVtDilFxRlMX1LO">自动轮播 · 共 6 条</span></div>
+        <div class="p-body" style="display:flex;flex-direction:column;" data-page-node-id="V9XVuVcNS1Clu1EpaMFbkb">
+          <div class="alarm-wrap" data-page-node-id="6HST71vkx6oyPHuTxmEUHb">
+            <div class="alarm-list" id="alarmList" data-page-node-id="GgggNWyqWpD94jPmSEIjdL"><div class="track" id="alarmTrack" data-page-node-id="Y6cjpvR4Y5T1656woEHjB4" style="transform: translateY(0px);"><div class="alarm crit">
+    <div class="r1"><span class="lv crit">紧急</span><span>视觉相机 CV-03</span><span class="dev">14:22:31</span></div>
+    <div class="r2">视觉定位相机镜头污损，识别置信度降至 82%，已触发定位偏移告警</div>
+    <div class="r3">持续时长：持续 2分18秒</div>
+    <div class="pulse w"></div>
+  </div><div class="alarm warn">
+    <div class="r1"><span class="lv warn">一般</span><span>AGV-02</span><span class="dev">14:18:07</span></div>
+    <div class="r2">AGV-02 电池电量低于 22%，预计剩余作业时间 45 分钟</div>
+    <div class="r3">持续时长：持续 6分41秒</div>
+    <div class="pulse"></div>
+  </div><div class="alarm crit">
+    <div class="r1"><span class="lv crit">紧急</span><span>机械臂 RA-01</span><span class="dev">13:56:52</span></div>
+    <div class="r2">机械臂 RA-01 J3 轴力矩超限，焊接角度偏差 3.2°，已暂停自动焊接</div>
+    <div class="r3">持续时长：持续 28分06秒</div>
+    <div class="pulse w"></div>
+  </div><div class="alarm warn">
+    <div class="r1"><span class="lv warn">一般</span><span>气路系统</span><span class="dev">13:41:20</span></div>
+    <div class="r2">气源压力波动 0.42MPa（阈值 0.45MPa），夹爪夹持稳定性下降</div>
+    <div class="r3">持续时长：持续 43分39秒</div>
+    <div class="pulse"></div>
+  </div><div class="alarm info">
+    <div class="r1"><span class="lv info">提示</span><span>物料线</span><span class="dev">13:20:05</span></div>
+    <div class="r2">连接件 C-07 库存降至 240 件，低于安全库存 300 件，建议提前补料</div>
+    <div class="r3">持续时长：持续 1小时05分</div>
+    <div class="pulse"></div>
+  </div><div class="alarm warn">
+    <div class="r1"><span class="lv warn">一般</span><span>PLC-COMM</span><span class="dev">12:58:44</span></div>
+    <div class="r2">PLC 通讯抖动，出现 2 次 120ms 数据重传，节拍波动 +0.2min</div>
+    <div class="r3">持续时长：持续 1小时27分</div>
+    <div class="pulse"></div>
+  </div></div></div>
+            <div class="dots" id="dots" data-page-node-id="Wv1bnylN1c4OYCxg0199TE"><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+ </div>
+</div>
+
+<script>
+/* 颜色统一从设计令牌读取：换风格只改 :root，不改业务代码 */
+const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const C={success:cssVar('--success'),warning:cssVar('--warning'),danger:cssVar('--danger'),
+  info:cssVar('--info'),neutral:cssVar('--neutral'),line:cssVar('--border-base'),
+  chart1:cssVar('--chart-1'),chart2:cssVar('--chart-2'),stage:cssVar('--bg-stage'),stage2:cssVar('--bg-stage-2')};
+/* ================= 时钟 ================= */
+const WK=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+function tick(){
+  const d=new Date();
+  const p=n=>String(n).padStart(2,'0');
+  clock.textContent=`${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+  date.textContent=`${d.getFullYear()}/${p(d.getMonth()+1)}/${p(d.getDate())}`;
+  week.textContent='';
+  const proj=document.getElementById('projName');
+  if(proj) proj.textContent='XX模块项目'+p(d.getMonth()+1)+p(d.getDate())+'号';
+
+}
+setInterval(tick,1000);tick();
+
+/* ================= 缩放适配 ================= */
+function fit(){
+  const s=Math.min(innerWidth/1920,innerHeight/1080);
+  document.documentElement.style.setProperty('--s',s);
+}
+addEventListener('resize',fit);fit();
+
+/* ================= 各工序联动数据 ================= */
+let ACTIVE_STEP = 2;   // 0-based，当前位于第 3 步：墙板整体拼装（须在 renderTasks 首次调用前声明）
+/* 每工序对应一套数据：任务指标(任务时长/任务进度/模块数)、人员当前工序与节拍、工单当前工序与进度。
+   切换当前工序(含 60s 自动切到 04)时，以下数据随工序刷新。 */
+const STEP_META=[
+  {dur:'12min 40s', prog:86, mods:3},  // 01 AGV自动上料
+  {dur:'18min 05s', prog:58, mods:3},  // 02 墙板吊装
+  {dur:'16min 23s', prog:30, mods:3},  // 03 墙板整体拼装（默认）
+  {dur:'21min 12s', prog:47, mods:2},  // 04 内外焊缝焊接
+  {dur:'14min 30s', prog:72, mods:3},  // 05 模台带模块流出
+];
+const WORKERS=[
+  {name:'张乐',  team:'拼装一班', shift:'早班 A', st:'SC-01', mat:'W-310 / 92%',     title:'墙板 W-310 / 已上料 92%', avatar:'../assets/images/worker-1.png'},
+  {name:'李建国',team:'拼装一班', shift:'早班 A', st:'SC-01', mat:'C-07 / 240',      title:'连接件 C-07 / 库存 240', avatar:'../assets/images/worker-2.png'},
+  {name:'王海涛',team:'拼装二班', shift:'早班 A', st:'SC-02', mat:'P-12 / 86',       title:'预埋件 P-12 / 库存 86', avatar:'../assets/images/worker-3.png'},
+  {name:'陈晓东',team:'拼装二班', shift:'早班 A', st:'SC-02', mat:'S-03 / 待补 12',  title:'密封胶 S-03 / 待补 12', avatar:'../assets/images/worker-4.png'},
+];
+/* 每工序下 4 名工人的「当前工序」与「当前节拍」(cls: ok=绿 / warn=橙) */
+const STEP_WORKER=[
+  [ {proc:'上料调度',beat:'3.8 h/块',cls:'ok'},  {proc:'AGV 送料',beat:'4.0 h/块',cls:'ok'},  {proc:'物料核验',beat:'3.6 h/块',cls:'ok'},  {proc:'待上料',beat:'4.2 h/块',cls:'warn'} ],
+  [ {proc:'吊具准备',beat:'3.7 h/块',cls:'ok'},  {proc:'墙板吊装',beat:'4.1 h/块',cls:'ok'},  {proc:'定位校正',beat:'3.9 h/块',cls:'ok'},  {proc:'待吊装',beat:'4.3 h/块',cls:'warn'} ],
+  [ {proc:'多点焊接',beat:'3.6 h/块',cls:'ok'},  {proc:'视觉定位',beat:'3.9 h/块',cls:'ok'},  {proc:'AGV 送料',beat:'4.2 h/块',cls:'warn'}, {proc:'待上料',beat:'4.0 h/块',cls:'warn'} ],
+  [ {proc:'内焊作业',beat:'3.8 h/块',cls:'ok'},  {proc:'外焊作业',beat:'4.0 h/块',cls:'ok'},  {proc:'焊缝检测',beat:'4.3 h/块',cls:'warn'}, {proc:'待焊接',beat:'4.1 h/块',cls:'warn'} ],
+  [ {proc:'模台定位',beat:'3.7 h/块',cls:'ok'},  {proc:'模块固定',beat:'3.9 h/块',cls:'ok'},  {proc:'AGV 转运',beat:'4.2 h/块',cls:'warn'}, {proc:'待流出',beat:'4.0 h/块',cls:'warn'} ],
+];
+/* 每工序下 3 张工单的「当前工序」与「任务进度」 */
+const STEP_TASK=[
+  [ {stage:'AGV 上料',p:92,dur:'11min 28s'}, {stage:'AGV 上料',p:85,dur:'13min 05s'}, {stage:'AGV 上料',p:78,dur:'10min 52s'} ],
+  [ {stage:'墙板吊装',p:70,dur:'16min 40s'}, {stage:'墙板吊装',p:60,dur:'19min 22s'}, {stage:'墙板吊装',p:52,dur:'17min 11s'} ],
+  [ {stage:'多点焊接',p:72,dur:'15min 10s'}, {stage:'视觉定位',p:30,dur:'17min 45s'}, {stage:'待上料',p:0,dur:'0min 00s'}  ],
+  [ {stage:'内焊作业',p:55,dur:'19min 30s'}, {stage:'内外焊接',p:46,dur:'22min 18s'}, {stage:'外焊作业',p:38,dur:'20min 44s'} ],
+  [ {stage:'模台固定',p:80,dur:'13min 12s'}, {stage:'AGV 转运',p:72,dur:'15min 33s'}, {stage:'模台流出',p:64,dur:'14min 01s'} ],
+];
+const pplBody=document.getElementById('pplBody');
+const PPL_PER_PAGE=2;                         // 每屏展示 2 张卡片
+const PPL_PAGES=Math.ceil(WORKERS.length/PPL_PER_PAGE);
+let pplPage=0;                                // 当前轮播页（0 起）
+function renderPersonnel(){
+  /* 人员信息以卡片列表展示；每屏仅展示 PPL_PER_PAGE 张，其余卡片 5s 自动轮播。
+     静态字段（姓名/班组/班次/工位/物料）随窗口重建；「当前工序」「当前节拍」两个工序相关字段
+     用 data-i（真实工人序号）标记，由 updatePersonnelProc() 单独更新 */
+  if(!pplBody) return;
+  const start=pplPage*PPL_PER_PAGE;
+  pplBody.innerHTML=WORKERS.slice(start,start+PPL_PER_PAGE).map((p,i)=>{
+    const realI=start+i;
+    const av=p.avatar?`<img class="pc-avatar-img" src="${p.avatar}" alt="${p.name}">`
+                     :`<span class="pc-avatar">${p.name[0]}</span>`;
+    return `<div class="ppl-card">
+      <div class="pc-top">
+        ${av}
+        <span class="pc-info">
+          <span class="pc-name">${p.name}</span>
+          <span class="pc-tags">
+            <span class="pc-tag">${p.team}</span>
+            <span class="pc-tag">${p.shift}</span>
+          </span>
+        </span>
+      </div>
+      <div class="pc-bottom">
+        <div class="pc-row"><span class="k">工位：</span><span class="pc-st">${p.st}</span></div>
+        <div class="pc-row"><span class="k">工序</span><span class="pc-proc" data-i="${realI}" data-col="proc"></span>
+          <span class="k">当前节拍</span><span data-i="${realI}" data-col="beat"></span></div>
+        <div class="pc-row"><span class="pc-mat" title="${p.title}">${p.mat}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+  updatePersonnelProc();
+  const hint=document.getElementById('pplHint');
+  if(hint) hint.innerHTML=`自动轮播 · 共 ${WORKERS.length} 人（第 ${pplPage+1}/${PPL_PAGES} 组）`;
+}
+function updatePersonnelProc(){
+  /* 仅联动「当前工序」「当前节拍」两个字段 */
+  const w=STEP_WORKER[ACTIVE_STEP], beatColor=c=>c==='ok'?C.success:C.warning;
+  if(!pplBody) return;
+  WORKERS.forEach((p,i)=>{
+    const c=w[i];
+    const pc=pplBody.querySelector(`[data-i="${i}"][data-col="proc"]`);
+    const bt=pplBody.querySelector(`[data-i="${i}"][data-col="beat"]`);
+    if(pc) pc.textContent=c.proc;
+    if(bt){ bt.textContent=c.beat; bt.style.color=beatColor(c.cls); }
+  });
+}
+function updateProcMeta(){
+  const m=STEP_META[ACTIVE_STEP];
+  const dur=document.getElementById('procDur'), prog=document.getElementById('procProg'), mods=document.getElementById('procMods');
+  if(dur) dur.textContent=m.dur;
+  if(mods) mods.textContent=m.mods;
+  if(prog){ prog.textContent=m.prog+'%'; prog.style.color=(m.prog>=60?C.success:C.warning); }
+}
+
+/* ================= 工位任务清单 =================
+   业务口径：一个工单 = 一个模块；每个模块在本站只有一条生产任务；
+   任务进度 = 该模块在当前工作站拼装到了什么程度；
+   模块整体完成 = 到本工作站为止，该模块整体生产完成度（前序工序已完成占比 + 本站进度折算） */
+const TASK_TABLE={PRE:33.3,SHARE:16.7};   // 前序工序已完成 33.3%，本站占整体 16.7%（全流道 6 道工序）
+const TASKS=[
+ {seq:'01',mod:'M-01',task:'墙板拼装',stage:'多点焊接',p:72,cls:'t-run', st:'执行中',cur:false,dur:'15min 10s'},
+ {seq:'02',mod:'M-02',task:'墙板拼装',stage:'视觉定位',p:30,cls:'t-run', st:'执行中',cur:true ,dur:'17min 45s'},
+ {seq:'03',mod:'M-03',task:'墙板拼装',stage:'待上料',  p:0, cls:'t-wait',st:'待执行',cur:false,dur:'0min 00s'}
+];
+function bar(pct,cls){return `<div class="pbar ${cls||''}"><i style="width:${Math.min(100,Math.max(0,pct))}%"></i></div>`;}
+function renderTasks(){
+  const now=new Date(),pad=n=>String(n).padStart(2,'0');
+  const mmdd=pad(now.getMonth()+1)+pad(now.getDate());
+  const proj='XX模块项目'+mmdd+'号';
+  const ovr=STEP_TASK[ACTIVE_STEP];
+  taskBody.innerHTML=TASKS.map((t,i)=>{
+    const p=ovr? ovr[i].p : t.p;
+    const stage=ovr? ovr[i].stage : t.stage;
+    const dur=ovr? ovr[i].dur : (t.dur||'--');
+    const st = p<=0?'待执行':(p>=100?'已完成':'执行中');
+    const cls = p<=0?'t-wait':(p>=100?'t-ok':'t-run');
+    const overall=(TASK_TABLE.PRE+TASK_TABLE.SHARE*p/100).toFixed(1);
+    return `<tr class="${t.cur?'cur':''}">
+     <td>JD-AZ-${mmdd}${t.seq}</td><td>${proj}</td><td>${t.mod}</td><td>${t.task}</td><td>${dur}</td><td class="stage">${stage}</td>
+     <td class="pc"><span>${p}%</span>${bar(p)}</td>
+     <td class="pc"><span>${overall}%</span>${bar(overall,'g')}</td>
+     <td><span class="tag ${cls}">${st}</span></td></tr>`;
+  }).join('');
+  const execCount=TASKS.reduce((n,t,i)=>{const p=ovr?ovr[i].p:t.p; return n+((p>0&&p<100)?1:0);},0);
+  document.getElementById('taskSub').textContent=`今日工单 ${TASKS.length} 单 · 执行中 ${execCount} 单 · 前序工序已完成 ${TASK_TABLE.PRE}%`;
+}
+renderTasks();
+
+/* ================= 工序步骤 ================= */
+/* 当前工序：墙板拼装工作站主工序为「墙板整体拼装」(第 3 步)。
+   每步可配实拍图 ../assets/images/flow-N.png（N=1~5）；未配图的步骤自动显示占位图，后续补全即可。
+   ACTIVE_STEP 已在上方「各工序联动数据」处声明。 */
+const STEPS=[
+  {n:'01', name:'AGV自动上料',   img:'../assets/images/flow-1.png'},
+  {n:'02', name:'墙板吊装',       img:'../assets/images/flow-2.png'},
+  {n:'03', name:'墙板整体拼装',   img:'../assets/images/flow-3.png'},
+  {n:'04', name:'内外焊缝焊接',   img:'../assets/images/flow-4.png'},
+  {n:'05', name:'模台带模块流出', img:'../assets/images/flow-5.png'},
+];
+/* 占位图：未提供实拍图时显示 */
+function placeholder(name){
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700">
+    <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="${C.stage}"/><stop offset="1" stop-color="${C.stage2}"/></linearGradient></defs>
+    <rect width="100%" height="100%" fill="url(#g)"/>
+    <g fill="none" stroke="rgba(111,220,234,.18)" stroke-width="1">
+      <path d="M0 560 H1200 M0 140 H1200"/></g>
+    <text x="600" y="330" fill="rgba(111,220,234,.55)" font-size="34" font-family="sans-serif" text-anchor="middle">工序图待补</text>
+    <text x="600" y="392" fill="rgba(233,243,249,.92)" font-size="46" font-family="sans-serif" text-anchor="middle" font-weight="bold">${name}</text>
+  </svg>`;
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+const shotEl=document.querySelector('.stage-img .shot');
+const shotBg=document.querySelector('.stage-img .shot-bg');
+function setStageImage(){
+  const s=STEPS[ACTIVE_STEP];
+  const src=s.img? s.img : placeholder(s.n+' '+s.name);
+  if(shotEl) shotEl.src=src;
+  if(shotBg) shotBg.src=src;
+}
+function renderSteps(){
+  steps.innerHTML=STEPS.map((s,i)=>{
+    const cls=i<ACTIVE_STEP?'done':(i===ACTIVE_STEP?'active':'');
+    return `<div class="step ${cls}" data-step="${i}"><span class="n">${s.n}</span>${s.name}</div>`;
+  }).join('');
+  /* 点击工序按钮 → 切换对应工艺图 */
+  steps.querySelectorAll('.step').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const i=parseInt(el.getAttribute('data-step'),10);
+      setActiveStep(i);
+      scheduleReset();
+    });
+  });
+}
+const procNameEl=document.getElementById('procName');
+function setActiveStep(i){
+  ACTIVE_STEP=i;
+  renderSteps();
+  setStageImage();
+  if(procNameEl) procNameEl.textContent=STEPS[ACTIVE_STEP].n+' '+STEPS[ACTIVE_STEP].name;
+  updatePersonnelProc();
+  updateProcMeta();
+  renderTasks();
+}
+/* 当前工序（默认回到的目标）：03 墙板整体拼装 */
+const DEFAULT_STEP = 2;
+let resetTimer=null;
+function scheduleReset(){
+  if(resetTimer) clearTimeout(resetTimer);
+  resetTimer=setTimeout(()=>setActiveStep(DEFAULT_STEP),60000);
+}
+renderSteps();
+setStageImage();
+if(procNameEl) procNameEl.textContent=STEPS[ACTIVE_STEP].n+' '+STEPS[ACTIVE_STEP].name;
+renderPersonnel();
+/* 人员卡片 5s 自动轮播（每屏 2 张，循环展示其余卡片） */
+setInterval(()=>{ pplPage=(pplPage+1)%PPL_PAGES; renderPersonnel(); },5000);
+updateProcMeta();
+renderTasks();
+/* 初始不自动跳转：等待用户点击工序按钮，点击后 60 秒自动回到当前工序 */
+
+
+/* ================= 告警轮播 ================= */
+const ALARMS=[
+ {lv:'crit',lvt:'紧急',dev:'视觉相机 CV-03',t:'视觉定位相机镜头污损，识别置信度降至 82%，已触发定位偏移告警',time:'14:22:31',d:'持续 2分18秒',p:1},
+ {lv:'warn',lvt:'一般',dev:'AGV-02',t:'AGV-02 电池电量低于 22%，预计剩余作业时间 45 分钟',time:'14:18:07',d:'持续 6分41秒',p:0},
+ {lv:'crit',lvt:'紧急',dev:'机械臂 RA-01',t:'机械臂 RA-01 J3 轴力矩超限，焊接角度偏差 3.2°，已暂停自动焊接',time:'13:56:52',d:'持续 28分06秒',p:1},
+ {lv:'warn',lvt:'一般',dev:'气路系统',t:'气源压力波动 0.42MPa（阈值 0.45MPa），夹爪夹持稳定性下降',time:'13:41:20',d:'持续 43分39秒',p:0},
+ {lv:'info',lvt:'提示',dev:'物料线',t:'连接件 C-07 库存降至 240 件，低于安全库存 300 件，建议提前补料',time:'13:20:05',d:'持续 1小时05分',p:0},
+ {lv:'warn',lvt:'一般',dev:'PLC-COMM',t:'PLC 通讯抖动，出现 2 次 120ms 数据重传，节拍波动 +0.2min',time:'12:58:44',d:'持续 1小时27分',p:0}
+];
+const track=document.getElementById('alarmTrack'),dots=document.getElementById('dots');
+function cardHtml(a){
+  return `<div class="alarm ${a.lv}">
+    <div class="r1"><span class="lv ${a.lv}">${a.lvt}</span><span>${a.dev}</span><span class="dev">${a.time}</span></div>
+    <div class="r2">${a.t}</div>
+    <div class="r3">持续时长：${a.d}</div>
+    <div class="pulse ${a.lv==='crit'?'w':''}" style="${a.lv==='crit'?`background:${C.danger};box-shadow:0 0 8px ${C.danger};`:''}"></div>
+  </div>`;
+}
+function render(){
+  /* 还原之前的轮播：整列渲染全部告警，每 4s 整体前移一条（滚动窗口），底栏高度由面板高度决定可见条数 */
+  const start=curIdx%ALARMS.length;
+  const ordered=[...ALARMS.slice(start),...ALARMS.slice(0,start)];
+  track.innerHTML=ordered.map(cardHtml).join('');
+  track.style.transform='translateY(0)';
+  dots.innerHTML=ALARMS.map((_,i)=>`<i class="${i===start?'on':''}"></i>`).join('');
+}
+let curIdx=0;
+render();
+setInterval(()=>{
+  curIdx=(curIdx+1)%ALARMS.length;
+  render();
+},4000);
+
+/* ================= 月度良品率图 ================= */
+const DAYS=30;
+/* 计划产量：每天 2~3 块；实际产出：个别日期欠产 1 块；良品率：质量口径，独立序列 */
+const plan=[3,2,3,3,2,3,2,3,3,2,3,3,2,3,3,2,3,2,3,3,2,3,3,2,3,2,3,3,2,3];
+const act =[3,2,3,3,2,2,2,3,3,2,3,3,1,3,3,2,3,2,3,2,2,3,3,2,3,2,3,2,2,3];
+const rate=[97.20,98.60,96.40,99.10,97.80,95.30,98.20,96.90,99.00,97.50,
+            97.60,98.10,94.80,99.20,97.30,98.50,96.70,97.90,99.10,98.00,
+            96.30,97.40,98.80,95.60,99.00,97.20,98.30,96.80,97.60,98.90];
+function renderChart(){
+  const W=1180,H=330,PL=46,PR=42,PT=18,PB=30;
+  const iw=W-PL-PR, ih=H-PT-PB;
+  const maxV=Math.max(...plan)+1;
+  const minR=90, maxR=100;
+  const bw=iw/DAYS;
+  const g=[];
+  g.push(`<defs>
+   <linearGradient id="pb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.chart2}" stop-opacity=".95"/><stop offset="1" stop-color="${C.chart2}" stop-opacity=".28"/></linearGradient>
+   <linearGradient id="ab" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.chart1}" stop-opacity="1"/><stop offset="1" stop-color="${C.chart1}" stop-opacity=".3"/></linearGradient>
+   <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.chart1}" stop-opacity=".28"/><stop offset="1" stop-color="${C.chart1}" stop-opacity="0"/></linearGradient>
+  </defs>`);
+  // 网格 + Y 轴
+  for(let i=0;i<=4;i++){
+    const y=PT+ih*i/4;
+    const v=Math.round(maxV*(1-i/4));
+    g.push(`<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="${C.line}" stroke-opacity=".22" stroke-dasharray="4 5"/>`);
+    g.push(`<text x="${PL-8}" y="${y+4}" fill="${C.neutral}" font-size="12" text-anchor="end">${v}</text>`);
+    const rv=Math.round((maxR-(maxR-minR)*i/4)*10)/10;
+    g.push(`<text x="${W-PR+8}" y="${y+4}" fill="${C.success}" font-size="12">${rv}%</text>`);
+  }
+  // 柱
+  plan.forEach((v,i)=>{
+    const x=PL+i*bw;
+    const h=ih*v/maxV, y=PT+ih-h;
+    const aw=bw*0.34, pw=bw*0.34;
+    g.push(`<rect x="${x+bw*0.10}" y="${y}" width="${pw}" height="${h}" rx="1.5" fill="url(#pb)"/>`);
+  });
+  act.forEach((v,i)=>{
+    const x=PL+i*bw;
+    const h=ih*v/maxV, y=PT+ih-h;
+    const aw=bw*0.34;
+    g.push(`<rect x="${x+bw*0.52}" y="${y}" width="${aw}" height="${h}" rx="1.5" fill="url(#ab)"/>`);
+  });
+  // 良品率折线
+  const pts=rate.map((v,i)=>`${(PL+i*bw+bw*0.69).toFixed(1)},${(PT+ih-ih*(v-minR)/(maxR-minR)).toFixed(1)}`).join(' ');
+  g.push(`<polyline points="${pts}" fill="none" stroke="${C.success}" stroke-width="2.4"/>`);
+  rate.forEach((v,i)=>{
+    const cx=(PL+i*bw+bw*0.69).toFixed(1), cy=(PT+ih-ih*(v-minR)/(maxR-minR)).toFixed(1);
+    g.push(`<circle cx="${cx}" cy="${cy}" r="3" fill="${C.stage}" stroke="${C.success}" stroke-width="1.8"/>`);
+  });
+  // X 轴
+  for(let i=0;i<DAYS;i++){
+    if(i%3===0||i===DAYS-1){
+      g.push(`<text x="${(PL+i*bw+bw/2).toFixed(1)}" y="${H-10}" fill="${C.neutral}" font-size="11" text-anchor="middle">${i+1}</text>`);
+    }
+  }
+  g.push(`<line x1="${PL}" y1="${PT+ih}" x2="${W-PR}" y2="${PT+ih}" stroke="${C.line}" stroke-opacity=".45"/>`);
+  g.push(`<text x="${PL}" y="${H-10}" fill="${C.neutral}" font-size="11">日</text>`);
+  g.push(`<text x="${W-PR}" y="${H-10}" fill="${C.neutral}" font-size="11" text-anchor="end">10 月</text>`);
+  document.getElementById('chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${g.join('')}</svg>`;
+}
+renderChart();
+const tp=plan.reduce((a,b)=>a+b,0), ta=act.reduce((a,b)=>a+b,0);
+const good=act.reduce((s,v,i)=>s+v*(rate[i]/100),0);
+kPlan.innerHTML=tp.toLocaleString()+'<small>块</small>';
+kAct.innerHTML=ta.toLocaleString()+'<small>块</small>';
+kRate.innerHTML=(good/ta*100).toFixed(2)+'<small>%</small>';
+</script>
+
+
+
+
+</body></html>

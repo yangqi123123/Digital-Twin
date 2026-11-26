@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="aUOPWgIh1aFnWsH8DTBz66" style="--s: 0.43072916666666666;" data-dm-ref="2"><head></head><body data-page-node-id="bnUjD8JYhHeESo7GvYQbbA" style="">﻿
+<style id="__dm_no_drag_style__">* { -webkit-user-drag: none !important; }</style><style id="__dm_bindable_badge_style__">[data-sp-bindable="database"]{outline:1px dashed #0088ff;outline-offset:2px;border-radius:4px;}[data-sp-bindable="database"] *{pointer-events:none !important;transition:none !important;animation:none !important;}[data-sp-bindable="database"]{transition:none !important;animation:none !important;}</style>﻿
+
+
+<meta charset="UTF-8" data-page-node-id="EDg4ImKGpDc1s8Eiq5jrnS">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="n7HQKH2WcVejIFAwRPbfui">
+<title>钢筋网片工作站 · 脉动智能产线</title>
+<style>
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    /* 设计令牌 · 对齐《组件与视觉规范》：换风格只换此组值，业务代码不动 */
+    --brand-cyan:#6FDCEA;
+    --bg-topbar:#1C4670; --bg-page:#0E3862; --bg-mid:#173F63; --bg-stage:#0B2C47; --bg-stage-2:#123A5C;
+    --bg-panel:rgba(27,72,110,.55); --bg-elevated:#123A5C; --bg-mask:rgba(6,26,48,.72);
+    --border-base:rgba(150,205,220,.42); --border-soft:rgba(150,205,220,.22);
+    --text:#EAF6FF; --text-secondary:#BFD4E2; --text-tertiary:#8FAFC2; --neutral:#A7C0CE; --on-cyan:#04162F;
+    --success:#4FD69B; --success-deep:#2E9E72; --warning:#F0B75A; --danger:#FF5D6C; --info:#6FDCEA;
+    --chart-1:#6FDCEA; --chart-2:#3E86B4; --chart-3:#4FD69B; --chart-4:#F0B75A;
+    --chart-track:rgba(111,220,234,.13); --glow:rgba(111,220,234,.5);
+  }
+  html,body{width:100%;height:100%;background:var(--bg-page);overflow:hidden;
+    font-family:"Microsoft YaHei","PingFang SC","Source Han Sans SC",sans-serif;color:var(--text);}
+  #stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;
+    transform-origin:center center;transform:translate(-50%,-50%) scale(var(--s,1));}
+  #screen{position:absolute;inset:0;display:flex;flex-direction:column;
+    padding:0 24px 18px;
+    background:
+      url('../assets/images/header-bg.png') center -12px / 100% auto no-repeat,
+      radial-gradient(1200px 600px at 50% -10%,rgba(96,178,206,.20),transparent 70%),
+      radial-gradient(900px 500px at 100% 100%,rgba(6,26,48,.38),transparent 70%),
+      linear-gradient(180deg,var(--bg-topbar) 0%,var(--bg-mid) 46%,var(--bg-page) 100%);
+    overflow:hidden;}
+  #screen::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:linear-gradient(rgba(150,205,220,.055) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(150,205,220,.055) 1px,transparent 1px);
+    background-size:44px 44px;}
+  #screen::after{content:"";position:absolute;left:0;right:0;top:0;height:3px;
+    background:linear-gradient(90deg,transparent,var(--brand-cyan),transparent);opacity:.8;}
+
+  /* ---------- header ---------- */
+  header{height:64px;flex:0 0 64px;display:flex;align-items:center;justify-content:space-between;
+    position:relative;z-index:2;padding:0 12px;}
+  .hd-left{display:flex;align-items:center;gap:12px;font-size:16px;letter-spacing:.5px;color:var(--text-secondary);
+    position:relative;z-index:1;}
+  .logo{width:40px;height:40px;aspect-ratio:1/1;object-fit:contain;object-position:center;
+    display:none;flex:0 0 40px;max-width:none;max-height:none;}
+  .hd-title{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font-size:32px;font-weight:700;letter-spacing:4px;
+    color:var(--text);z-index:1;}
+  .hd-title span{color:var(--brand-cyan);margin:0 8px;font-weight:400;font-size:20px;}
+  .hd-right{text-align:right;font-size:16px;color:var(--text-secondary);line-height:1.5;position:relative;z-index:1;}
+  .hd-right b{color:var(--text);font-size:20px;letter-spacing:.5px;}
+
+  /* ---------- layout ---------- */
+  .main{flex:1;display:flex;gap:16px;padding-top:8px;position:relative;z-index:2;min-height:0;}
+  .col-left{flex:1 1 0;display:flex;flex-direction:column;gap:12px;min-width:0;}
+  .col-right{flex:0 0 620px;display:flex;flex-direction:column;gap:12px;}
+  .panel{position:relative;background:var(--bg-panel);border:1px solid var(--border-base);border-radius:2px;
+    display:flex;flex-direction:column;min-height:0;}
+  .panel::before,.panel::after{content:"";position:absolute;width:14px;height:14px;border:2px solid var(--brand-cyan);}
+  .panel::before{left:-1px;top:-1px;border-right:0;border-bottom:0;}
+  .panel::after{right:-1px;bottom:-1px;border-left:0;border-top:0;}
+  .p-head{flex:0 0 40px;display:flex;align-items:center;gap:8px;padding:0 16px;
+    border-bottom:1px solid var(--border-soft);font-size:18px;font-weight:600;letter-spacing:.5px;overflow:visible;}
+  .p-head .dia{width:8px;height:8px;flex:0 0 8px;margin:0 2px;background:var(--brand-cyan);transform:rotate(45deg);
+    filter:drop-shadow(0 0 4px var(--glow));}
+  .p-head .sub{margin-left:auto;font-size:12px;color:var(--text-secondary);font-weight:400;}
+  .p-body{flex:1;padding:16px;min-height:0;overflow:hidden;}
+
+  /* ---------- table ---------- */
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th{background:rgba(130,195,215,.20);color:var(--text-secondary);font-weight:600;height:38px;padding:0 8px;
+    border:1px solid var(--border-soft);text-align:center;white-space:nowrap;}
+  td{padding:8px;border:1px solid var(--border-soft);text-align:center;color:var(--text-secondary);}
+  tbody tr:nth-child(even){background:rgba(255,255,255,.05);}
+  tbody tr:hover{background:rgba(111,220,234,.10);}
+  .tag{display:inline-block;padding:2px 8px;border-radius:2px;font-size:12px;}
+  .t-ok{background:rgba(79,214,155,.16);color:var(--success);border:1px solid rgba(79,214,155,.4);}
+  .t-run{background:rgba(111,220,234,.16);color:var(--info);border:1px solid rgba(111,220,234,.45);}
+  .t-wait{background:rgba(240,183,90,.14);color:var(--warning);border:1px solid rgba(240,183,90,.4);}
+  .t-err{background:rgba(255,93,108,.16);color:var(--danger);border:1px solid rgba(255,93,108,.45);}
+  /* 任务清单：进度条 / 当前行高亮 */
+  tr.cur td{background:rgba(111,220,234,.12)!important;color:var(--text);}
+  td.pc{min-width:118px;padding:4px 8px;}
+  td.pc span{display:block;font-size:14px;letter-spacing:.5px;}
+  td.stage{color:var(--info);}
+  /* 任务清单：固定行高，保证三条工单完整可见 */
+  #taskBody tr{height:58px;}
+  #taskBody td{padding:4px 8px;vertical-align:middle;}
+  .pbar{position:relative;margin-top:4px;height:14px;border-radius:7px;background:var(--chart-track);overflow:hidden;}
+  .pbar i{display:block;height:100%;border-radius:7px;background:linear-gradient(90deg,var(--chart-2),var(--chart-1));
+    box-shadow:0 0 8px var(--glow);}
+  .pbar em{position:absolute;right:8px;top:0;font-style:normal;font-size:11px;line-height:14px;color:var(--text);
+    text-shadow:0 1px 3px rgba(0,0,0,.8);}
+  /* 任务行可点选，选中后右侧人员信息联动 */
+  #taskBody tr{cursor:pointer;}
+  #taskBody tr.sel td{background:rgba(111,220,234,.20)!important;}
+  #taskBody tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--brand-cyan);}
+  .pbar.g i{background:linear-gradient(90deg,var(--success-deep),var(--success));box-shadow:0 0 8px rgba(79,214,155,.45);}
+
+  /* ---------- 当前工序 ---------- */
+  .proc{flex:1 1 auto;min-height:0;}
+  .proc-meta{display:flex;align-items:center;gap:24px;font-size:16px;color:var(--text-secondary);padding:0 0 8px;}
+  .proc-meta b{color:var(--text);font-size:20px;margin:0 4px;}
+  #projName{color:var(--text-secondary);font-weight:400;font-size:16px;}
+  .proc-meta .ok{color:var(--success);}
+  .proc-meta .warn{color:var(--warning);}
+  .proc-meta .right{margin-left:auto;display:flex;align-items:center;gap:24px;font-size:16px;}
+  .proc-meta .right b{color:var(--brand-cyan);}
+  .stage-img{position:relative;flex:1;min-height:0;border:1px solid var(--border-soft);border-radius:2px;
+    background:var(--bg-stage);overflow:hidden;}
+  .stage-img .shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;
+    filter:saturate(.85) contrast(1.05);transform:scale(1.02);transform-origin:center;}
+  .stage-img .shot-bg{position:absolute;inset:-6%;width:112%;height:112%;object-fit:cover;display:block;
+    filter:blur(26px) saturate(.7) brightness(.7);opacity:.55;}
+  /* 深蓝遮罩：上下左右虚化，中间透明 */
+  .stage-img .veil{position:absolute;inset:0;pointer-events:none;z-index:3;
+    background:
+      linear-gradient(180deg,rgba(11,44,71,.46) 0%,rgba(14,52,80,.24) 8%,rgba(16,58,88,.02) 20%,rgba(16,58,88,0) 30%,rgba(16,58,88,0) 70%,rgba(16,58,88,.03) 80%,rgba(12,46,74,.26) 92%,rgba(9,38,64,.46) 100%),
+      linear-gradient(90deg,rgba(11,44,71,.40) 0%,rgba(14,52,80,.20) 9%,rgba(16,58,88,.02) 24%,rgba(16,58,88,0) 34%,rgba(16,58,88,0) 66%,rgba(16,58,88,.02) 76%,rgba(12,46,74,.22) 91%,rgba(9,38,64,.40) 100%);}
+  .stage-img .veil-2{position:absolute;inset:0;pointer-events:none;z-index:3;
+    background:radial-gradient(ellipse 76% 70% at 50% 50%,rgba(16,58,88,0) 58%,rgba(12,48,76,.10) 82%,rgba(8,34,58,.28) 100%);
+    box-shadow:inset 0 0 40px 4px rgba(9,38,64,.26);}
+  .stage-img .veil-3{position:absolute;inset:0;pointer-events:none;z-index:4;
+    background:linear-gradient(180deg,rgba(20,150,205,.05),rgba(8,52,80,.12));mix-blend-mode:multiply;}
+  .stage-img .veil-glow{position:absolute;inset:0;pointer-events:none;z-index:4;
+    background:radial-gradient(ellipse 40% 42% at 50% 50%,rgba(111,220,234,.12),rgba(111,220,234,0) 70%);}
+  .stage-img .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;
+    color:var(--neutral);font-size:24px;letter-spacing:2px;z-index:5;pointer-events:none;
+    text-shadow:0 0 12px rgba(9,38,64,.95);}
+  .stage-img .ph small{display:block;margin-top:8px;font-size:14px;color:var(--text-tertiary);letter-spacing:.5px;}
+  .steps{flex:0 0 auto;display:flex;gap:12px;margin-top:12px;}
+  .step{flex:1;height:56px;border:1px solid var(--border-soft);border-radius:4px;display:flex;
+    align-items:center;justify-content:center;gap:8px;font-size:16px;color:var(--neutral);cursor:pointer;
+    background:linear-gradient(180deg,rgba(18,62,92,.35),rgba(12,50,76,.2));position:relative;}
+  .step .n{width:24px;height:24px;border-radius:50%;border:1px solid var(--border-base);display:flex;
+    align-items:center;justify-content:center;font-size:12px;color:var(--text-tertiary);}
+  .step.done{color:var(--success);border-color:rgba(79,214,155,.45);}
+  .step.done .n{border-color:rgba(79,214,155,.6);color:var(--success);}
+  .step.active{border-color:var(--brand-cyan);color:var(--text);box-shadow:0 0 18px var(--glow) inset,0 0 12px rgba(111,220,234,.25);
+    background:linear-gradient(180deg,rgba(62,134,180,.45),rgba(10,45,110,.4));}
+  .step.active .n{border-color:var(--brand-cyan);background:var(--brand-cyan);color:var(--on-cyan);}
+
+  /* ---------- M0 作业标准步骤条 + 标准作业轮播（§2.2 钢筋网片工作站） ---------- */
+  .std-steps{flex:0 0 48px;display:flex;gap:10px;margin-bottom:10px;}
+  .std-step{flex:1;min-width:0;height:46px;border:1px solid var(--border-soft);border-radius:3px;
+    display:flex;align-items:center;justify-content:center;gap:8px;padding:0 8px;cursor:pointer;
+    font-size:14px;color:var(--neutral);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    background:linear-gradient(180deg,rgba(18,62,92,.35),rgba(12,50,76,.2));transition:all .25s ease;}
+  .std-step .n{width:24px;height:24px;flex:0 0 24px;border-radius:50%;border:1px solid var(--border-base);
+    display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text-tertiary);}
+  .std-step:hover{border-color:rgba(111,220,234,.6);color:var(--text);}
+  .std-step.active{border-color:var(--brand-cyan);color:var(--text);font-weight:600;
+    box-shadow:0 0 16px var(--glow) inset,0 0 10px rgba(111,220,234,.22);
+    background:linear-gradient(180deg,rgba(62,134,180,.45),rgba(10,45,110,.4));}
+  .std-step.active .n{border-color:var(--brand-cyan);background:var(--brand-cyan);color:var(--on-cyan);font-weight:700;}
+  .sop-main{flex:1 1 auto;min-height:0;display:flex;gap:12px;}
+  .sop-pic{flex:0 0 45%;min-width:0;position:relative;border:1px solid var(--border-soft);border-radius:2px;
+    background:var(--bg-stage);overflow:hidden;display:flex;align-items:center;justify-content:center;}
+  .sop-pic::after{content:"";position:absolute;inset:0;pointer-events:none;
+    box-shadow:inset 0 0 36px 3px rgba(9,38,64,.35);}
+  .sop-pic img{width:100%;height:100%;object-fit:contain;display:block;transition:opacity .35s ease;}
+  .pic-tag{position:absolute;left:10px;top:8px;z-index:2;padding:3px 10px;border-radius:2px;
+    background:rgba(9,38,64,.82);border:1px solid var(--border-base);color:var(--brand-cyan);font-size:12px;letter-spacing:.5px;}
+  .sop-detail{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px;}
+  .sop-hd{flex:0 0 auto;display:flex;align-items:center;gap:10px;font-size:18px;color:var(--text);
+    border-bottom:1px solid var(--border-soft);padding-bottom:7px;}
+  .sop-hd .sop-num{flex:0 0 auto;min-width:26px;height:26px;padding:0 5px;border-radius:3px;
+    background:var(--brand-cyan);color:var(--on-cyan);font-size:14px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;}
+  .sop-hd .sop-counter{margin-left:auto;font-size:12px;color:var(--text-tertiary);font-weight:400;}
+  .sop-sec{flex:0 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+  .sec-h{flex:0 0 auto;display:flex;align-items:center;gap:7px;font-size:16px;font-weight:600;
+    color:var(--text);padding-left:9px;border-left:3px solid var(--brand-cyan);margin-bottom:4px;}
+  .sec-h.note{border-left-color:var(--warning);}
+  .sop-sec ul{list-style:none;margin:0;padding:0 0 0 14px;overflow-y:auto;scrollbar-width:none;
+    font-size:14px;line-height:1.52;color:var(--text-secondary);}
+  .sop-sec ul::-webkit-scrollbar{display:none;}
+  .sop-sec li{position:relative;padding:1px 0 2px;}
+  .sop-sec li::before{content:"";position:absolute;left:-10px;top:10px;width:4px;height:4px;border-radius:50%;
+    background:var(--brand-cyan);opacity:.8;}
+  .sop-sec.note li::before{background:var(--warning);}
+  .sop-bottom{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;
+    margin-top:10px;padding-top:8px;border-top:1px solid var(--border-soft);}
+  .sop-stations{display:flex;align-items:center;gap:14px;font-size:15px;color:var(--text-secondary);min-width:0;white-space:nowrap;}
+  .sop-stations b{color:var(--brand-cyan);font-weight:600;}
+  .sop-stations .st-sep{width:1px;height:14px;background:var(--border-base);flex:0 0 1px;}
+  .sop-nav{display:flex;align-items:center;gap:10px;flex:0 0 auto;}
+  .nav-arrow{width:24px;height:24px;border-radius:50%;border:1px solid var(--border-base);background:transparent;
+    color:var(--brand-cyan);font-size:17px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+  .nav-arrow:hover{background:rgba(111,220,234,.15);border-color:var(--brand-cyan);}
+  .sop-dots{display:flex;align-items:center;gap:9px;}
+  .sop-dots i{width:9px;height:9px;border-radius:50%;background:rgba(120,160,210,.38);cursor:pointer;transition:all .25s ease;}
+  .sop-dots i:hover{background:rgba(111,220,234,.75);}
+  .sop-dots i.on{width:11px;height:11px;background:var(--brand-cyan);box-shadow:0 0 8px var(--brand-cyan);}
+  @keyframes sopIn{from{opacity:.25;transform:translateX(10px);}to{opacity:1;transform:translateX(0);}}
+  .sop-in{animation:sopIn .4s ease both;}
+
+  /* ---------- 人员信息：成员+任务合成一张竖卡，纵向轮播，一页最多两张 ---------- */
+  .team-head{flex:0 0 auto;font-size:14px;color:var(--text-secondary);padding-bottom:8px;}
+  .team-head b{color:var(--brand-cyan);font-weight:600;margin:0 3px;}
+  .team-head .sep{color:var(--neutral);margin:0 11px;}
+  /* 纵向轮播视口：一页一行两张，左右排版 */
+  .roll-view{flex:1 1 auto;min-height:0;overflow:hidden;}
+  .roll-track{height:100%;transition:transform .55s cubic-bezier(.4,0,.2,1);}
+  .roll-page{height:100%;box-sizing:border-box;display:grid;grid-template-columns:1fr 1fr;
+    grid-template-rows:1fr;gap:8px;align-content:start;padding:1px 8px;}
+  /* 单张卡：上成员 / 横线 / 下任务（一行两张并排） */
+  .pt-card{min-height:0;border:1px solid var(--border-soft);border-radius:2px;
+    background:linear-gradient(180deg,rgba(130,195,215,.12),rgba(62,134,180,.10));
+    display:flex;flex-direction:column;padding:12px 14px 14px;overflow:hidden;}
+  .pt-top{display:flex;align-items:center;gap:10px;flex:0 0 auto;}
+  .pt-avatar-img{width:40px;height:40px;border-radius:50%;flex:0 0 40px;object-fit:cover;
+    box-shadow:0 0 8px var(--glow);border:1px solid rgba(111,220,234,.4);}
+  .pt-avatar{width:40px;height:40px;border-radius:50%;flex:0 0 40px;
+    background:linear-gradient(135deg,var(--chart-2),var(--chart-1));color:var(--on-cyan);font-weight:700;
+    display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .pt-name{font-size:16px;font-weight:600;color:var(--text);line-height:1.2;}
+  .pt-role{margin-left:auto;font-size:12px;padding:2px 9px;border-radius:2px;color:var(--brand-cyan);
+    border:1px solid rgba(111,220,234,.4);background:rgba(111,220,234,.10);flex:0 0 auto;}
+  .pt-dept{font-size:12px;color:var(--text-secondary);line-height:16px;margin-top:3px;}
+  .pt-divider{flex:0 0 auto;height:1px;margin:10px 0 9px;
+    background:linear-gradient(90deg,transparent,var(--border-base) 8%,var(--border-base) 92%,transparent);}
+  .pt-task{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:flex-start;gap:4px;padding-top:2px;}
+  .pt-task-r1{display:flex;align-items:center;gap:9px;line-height:19px;}
+  .pt-proc{font-size:15px;font-weight:600;color:var(--text);}
+  .pt-st{font-size:12px;padding:1px 8px;border-radius:2px;border:1px solid var(--border-soft);}
+  .pt-st.done{color:var(--success);border-color:rgba(79,214,155,.4);background:rgba(79,214,155,.10);}
+  .pt-st.run{color:var(--info);border-color:rgba(62,134,180,.45);background:rgba(62,134,180,.12);}
+  .pt-st.wait{color:var(--warning);border-color:rgba(240,183,90,.45);background:rgba(240,183,90,.10);}
+  .pt-line{font-size:12px;line-height:16px;color:var(--neutral);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .pt-line i{font-style:normal;color:var(--text-secondary);}
+  /* 轮播指示点 */
+  .ppl-dots{flex:0 0 auto;display:flex;gap:6px;justify-content:center;padding-top:5px;}
+  .ppl-dots i{width:6px;height:6px;border-radius:50%;background:rgba(120,160,210,.35);cursor:pointer;transition:all .25s;}
+  .ppl-dots i.on{width:14px;border-radius:3px;background:var(--brand-cyan);box-shadow:0 0 7px var(--brand-cyan);}
+
+  /* ---------- 告警 ---------- */
+  .alarm-wrap{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .alarm-list{flex:1;overflow:hidden;position:relative;}
+  .alarm-list .track{position:absolute;left:0;right:0;top:0;transition:transform .6s cubic-bezier(.4,0,.2,1);}
+  .alarm{position:relative;border:1px solid var(--border-soft);border-left:3px solid var(--warning);border-radius:2px;
+    padding:8px 12px;margin-bottom:8px;background:linear-gradient(90deg,rgba(240,183,90,.10),rgba(18,62,92,.18));}
+  .alarm.crit{border-left-color:var(--danger);background:linear-gradient(90deg,rgba(255,93,108,.13),rgba(18,62,92,.18));}
+  .alarm.info{border-left-color:var(--chart-2);background:linear-gradient(90deg,rgba(62,134,180,.10),rgba(18,62,92,.15));}
+  .alarm.on{box-shadow:0 0 14px var(--glow);border-color:var(--brand-cyan);}
+  .alarm .r1{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);}
+  .alarm .lv{font-size:12px;padding:2px 8px;border-radius:2px;flex:0 0 auto;}
+  .alarm .lv.crit{background:rgba(255,93,108,.18);color:var(--danger);border:1px solid rgba(255,93,108,.45);}
+  .alarm .lv.warn{background:rgba(240,183,90,.16);color:var(--warning);border:1px solid rgba(240,183,90,.45);}
+  .alarm .lv.info{background:rgba(62,134,180,.16);color:var(--info);border:1px solid rgba(62,134,180,.4);}
+  .alarm .no{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--brand-cyan);letter-spacing:.3px;}
+  .alarm .time{margin-left:auto;font-size:11px;color:var(--neutral);flex:0 0 auto;}
+  .alarm .r2{margin-top:5px;font-size:13px;color:var(--text-secondary);line-height:1.4;}
+  .alarm .fields{margin-top:6px;padding-top:6px;border-top:1px solid var(--border-soft);
+    display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;}
+  .alarm .fields span{font-size:11px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .alarm .fields span i{font-style:normal;color:var(--neutral);margin-right:5px;}
+  .alarm .fields span b{font-weight:600;color:var(--text);}
+  .alarm .pulse{flex:0 0 auto;width:7px;height:7px;border-radius:50%;
+    background:var(--danger);box-shadow:0 0 8px var(--danger);animation:bl 1s infinite;}
+  .alarm .pulse.w{background:var(--warning);box-shadow:0 0 8px var(--warning);}
+  @keyframes bl{0%,100%{opacity:1}50%{opacity:.25}}
+  .dots{display:flex;gap:8px;justify-content:center;margin-top:4px;}
+  .dots i{width:7px;height:7px;border-radius:50%;background:rgba(120,160,210,.35);}
+  .dots i.on{background:var(--brand-cyan);box-shadow:0 0 8px var(--brand-cyan);}
+
+  /* ---------- 质量图表 ---------- */
+  .chart{flex:1;min-height:0;}
+  .chart svg{width:100%;height:100%;display:block;}
+
+  /* ---------- 质量与仓储分析 · 左右多图表 ---------- */
+  .qa-body{flex:1;min-height:0;display:flex;flex-direction:column;padding:2px 16px 12px;}
+  .qa-main{flex:1;min-height:0;display:grid;grid-template-columns:1.4fr .6fr;gap:12px;}
+  .qa-col{display:flex;flex-direction:column;min-width:0;min-height:0;}
+  .qa-col.left{border-right:1px solid var(--border-soft);padding-right:12px;}
+  .qa-sec{display:flex;align-items:center;gap:7px;flex:0 0 auto;font-size:14px;font-weight:600;color:var(--text);}
+  .qa-sec::before{content:"";width:8px;height:8px;background:var(--brand-cyan);transform:rotate(45deg);flex:0 0 8px;}
+  .qa-legend{display:flex;gap:12px;font-size:11px;color:var(--neutral);flex:0 0 auto;flex-wrap:wrap;margin-top:4px;}
+  .qa-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px;}
+  .qa-legend .lg-plan{background:var(--chart-2);}
+  .qa-legend .lg-act{background:var(--chart-1);}
+  .qa-legend .lg-rate{background:var(--success);border-radius:50%;width:8px;height:8px;}
+  #chart{flex:1;min-height:0;}
+  .wh-panel{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
+  .wh-donut-wrap{flex:0 0 auto;display:flex;align-items:center;justify-content:center;position:relative;width:152px;height:152px;}
+  .wh-donut-wrap svg{width:152px;height:152px;display:block;}
+  .wh-donut-mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
+  .wh-donut-mid b{display:block;font-size:26px;font-weight:700;color:var(--brand-cyan);line-height:1.1;text-shadow:0 0 12px var(--glow);}
+  .wh-donut-mid span{display:block;font-size:11px;color:var(--text-secondary);margin-top:2px;white-space:nowrap;}
+  .wh-right{width:100%;flex:1;min-height:0;display:flex;}
+  .wh-cells{width:100%;display:grid;grid-template-rows:repeat(2,32px);gap:7px;flex:0 0 auto;}
+  .wh-cell{min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:0 12px;border:1px solid var(--border-soft);border-radius:2px;
+    background:linear-gradient(90deg,rgba(18,62,92,.42),rgba(18,62,92,.18));position:relative;overflow:hidden;}
+  .wh-cell::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;}
+  .wh-cell.in::after{background:var(--chart-1);box-shadow:0 0 8px var(--chart-1);}
+  .wh-cell.out::after{background:var(--success);box-shadow:0 0 8px var(--success);}
+  .wh-k{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);white-space:nowrap;}
+  .wh-k::before{content:"";width:9px;height:9px;border-radius:50%;flex:0 0 9px;}
+  .wh-cell.in .wh-k::before{background:var(--chart-1);box-shadow:0 0 6px var(--chart-1);}
+  .wh-cell.out .wh-k::before{background:var(--success);box-shadow:0 0 6px var(--success);}
+  .wh-v{font-size:17px;font-weight:700;color:var(--text);line-height:1.2;letter-spacing:.5px;white-space:nowrap;}
+  .wh-v small{font-size:11px;color:var(--neutral);font-weight:400;margin-left:2px;}
+  .wh-cell.in .wh-v{color:var(--chart-1);}
+  .wh-cell.out .wh-v{color:var(--success);}
+
+  /* ---------- 质量与仓储分析 · 时间维度 tab ---------- */
+  .p-head .qa-period{margin-left:auto;display:flex;gap:5px;}
+  .qa-period button{font-size:12px;color:var(--text-secondary);background:rgba(18,62,92,.45);
+    border:1px solid var(--border-soft);border-radius:2px;padding:2px 9px;cursor:pointer;transition:all .2s;line-height:1.5;}
+  .qa-period button.on{color:var(--on-cyan);background:linear-gradient(135deg,var(--chart-2),var(--chart-1));
+    border-color:transparent;font-weight:600;}
+  .qa-period button:hover:not(.on){color:var(--brand-cyan);border-color:rgba(111,220,234,.5);}
+
+  /* ---------- 故障告警详情弹窗 ---------- */
+  .p-head .view-btn{margin-left:auto;font-size:13px;font-weight:400;letter-spacing:0;
+    color:var(--brand-cyan);background:rgba(111,220,234,.12);border:1px solid rgba(111,220,234,.55);
+    border-radius:2px;padding:3px 14px;cursor:pointer;transition:all .2s;}
+  .p-head .view-btn:hover{background:rgba(111,220,234,.26);box-shadow:0 0 10px var(--glow);}
+  .alarm-modal{position:absolute;inset:0;z-index:60;display:none;align-items:center;justify-content:center;
+    background:var(--bg-mask);backdrop-filter:blur(4px);}
+  .alarm-modal.open{display:flex;}
+  .am-panel{position:relative;width:1640px;height:930px;display:flex;flex-direction:column;
+    background:linear-gradient(180deg,rgba(30,78,118,.98),rgba(12,44,73,.98));
+    border:1px solid var(--border-base);
+    box-shadow:0 0 60px rgba(0,0,0,.55),inset 0 0 60px rgba(111,220,234,.05);}
+  .am-panel::before,.am-panel::after{content:"";position:absolute;width:18px;height:18px;border:2px solid var(--brand-cyan);}
+  .am-panel::before{left:-1px;top:-1px;border-right:0;border-bottom:0;}
+  .am-panel::after{right:-1px;bottom:-1px;border-left:0;border-top:0;}
+  .am-head{flex:0 0 58px;display:flex;align-items:center;gap:8px;padding:0 24px;
+    border-bottom:1px solid var(--border-soft);font-size:22px;font-weight:700;letter-spacing:1px;}
+  .am-head .dia{width:8px;height:8px;background:var(--brand-cyan);transform:rotate(45deg);
+    filter:drop-shadow(0 0 4px var(--glow));}
+  .am-tabs{display:flex;gap:8px;margin-left:46px;}
+  .am-tab{font-size:15px;font-weight:400;letter-spacing:0;color:var(--text-secondary);cursor:pointer;
+    padding:6px 22px;border:1px solid var(--border-soft);border-radius:2px;
+    background:rgba(18,62,92,.5);transition:all .2s;}
+  .am-tab:hover{color:var(--text);border-color:var(--border-base);}
+  .am-tab.active{color:var(--on-cyan);font-weight:600;background:var(--brand-cyan);
+    border-color:var(--brand-cyan);box-shadow:0 0 12px var(--glow);}
+  .am-close{margin-left:auto;width:32px;height:32px;font-size:22px;line-height:1;color:var(--text-secondary);
+    background:rgba(18,62,92,.6);border:1px solid var(--border-soft);border-radius:2px;cursor:pointer;}
+  .am-close:hover{color:var(--danger);border-color:var(--danger);}
+  .am-body{flex:1;min-height:0;overflow:auto;padding:16px 22px 22px;}
+  .am-body::-webkit-scrollbar{width:6px;}
+  .am-body::-webkit-scrollbar-thumb{background:rgba(111,220,234,.35);border-radius:3px;}
+  .am-view{display:none;}
+  .am-view.active{display:block;}
+  .info-tabs{display:flex;gap:8px;border-bottom:1px solid var(--border-soft);padding-bottom:10px;}
+  .info-tabs button{font-size:14px;color:var(--text-secondary);cursor:pointer;padding:7px 18px;
+    background:rgba(18,62,92,.45);border:1px solid var(--border-soft);border-radius:2px;}
+  .info-tabs button:hover{color:var(--text);border-color:var(--border-base);}
+  .info-tabs button.on{color:var(--on-cyan);font-weight:600;background:var(--brand-cyan);
+    border-color:var(--brand-cyan);box-shadow:0 0 10px var(--glow);}
+  .filter-bar{display:flex;align-items:center;gap:14px;padding:12px 2px 14px;}
+  .filter-bar label{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--text-secondary);}
+  .filter-bar input{width:178px;height:32px;padding:0 10px;color:var(--text);font-family:inherit;font-size:13px;
+    background:rgba(9,38,64,.55);border:1px solid var(--border-soft);border-radius:2px;outline:none;}
+  .filter-bar input:focus{border-color:var(--brand-cyan);box-shadow:0 0 8px var(--glow);}
+  .filter-bar input::placeholder{color:var(--neutral);opacity:.75;}
+  .f-btn{font-size:13px;padding:6px 20px;cursor:pointer;color:var(--text-secondary);font-family:inherit;
+    background:rgba(18,62,92,.55);border:1px solid var(--border-soft);border-radius:2px;}
+  .f-btn:hover{border-color:var(--brand-cyan);color:var(--brand-cyan);}
+  .f-btn.primary{color:var(--on-cyan);font-weight:600;background:var(--brand-cyan);border-color:var(--brand-cyan);}
+  .info-table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed;}
+  .info-table th{height:40px;padding:0 8px;background:rgba(130,195,215,.18);color:var(--text-secondary);
+    font-weight:600;border:1px solid var(--border-soft);text-align:center;white-space:nowrap;}
+  .info-table td{height:56px;padding:5px 8px;border:1px solid var(--border-soft);
+    color:var(--text-secondary);text-align:center;vertical-align:middle;}
+  .info-table tbody tr:nth-child(even){background:rgba(255,255,255,.04);}
+  .info-table td.l{text-align:left;padding-left:12px;}
+  .info-table .cut{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .info-table .gap-low{color:var(--brand-cyan);font-weight:700;}
+  .info-table .gap-over{color:var(--success);font-weight:700;}
+  .info-table .main{display:block;font-size:14px;font-weight:600;color:var(--text);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .info-table .sub{display:block;margin-top:3px;font-size:12px;color:var(--neutral);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .info-table .sub.cy{color:var(--brand-cyan);}
+  .lv-badge{display:inline-block;min-width:28px;padding:3px 8px;border-radius:2px;font-weight:600;
+    color:var(--brand-cyan);background:rgba(111,220,234,.15);border:1px solid rgba(111,220,234,.45);}
+  .lv-badge.mid{color:var(--success);background:rgba(79,214,155,.14);border-color:rgba(79,214,155,.42);}
+  .st-tag{display:inline-block;padding:3px 10px;border-radius:2px;font-size:12px;white-space:nowrap;}
+  .st-tag.low{background:rgba(111,220,234,.16);color:var(--brand-cyan);border:1px solid rgba(111,220,234,.45);}
+  .st-tag.over{background:rgba(79,214,155,.15);color:var(--success);border:1px solid rgba(79,214,155,.42);}
+  .st-tag.active{background:rgba(111,220,234,.16);color:var(--brand-cyan);border:1px solid rgba(111,220,234,.45);}
+  .st-tag.done{background:rgba(79,214,155,.15);color:var(--success);border:1px solid rgba(79,214,155,.42);}
+  .pager{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:14px 2px 0;}
+  .pager .pg-total{font-size:13px;color:var(--neutral);white-space:nowrap;}
+  .pager select.pg-size{height:28px;min-width:88px;padding:0 6px;font-family:inherit;font-size:12px;cursor:pointer;
+    color:var(--text);background:rgba(18,62,92,.7);border:1px solid var(--border-base);border-radius:2px;}
+  .pager select.pg-size option{background:#123A5C;color:var(--text);}
+  .pager .pg-btns{display:flex;gap:6px;align-items:center;}
+  .pager button{min-width:30px;height:28px;padding:0 8px;font-size:12px;font-family:inherit;cursor:pointer;
+    color:var(--text-secondary);background:rgba(18,62,92,.5);border:1px solid var(--border-soft);border-radius:2px;}
+  .pager button:hover:not(:disabled){color:var(--brand-cyan);border-color:var(--brand-cyan);}
+  .pager button.on{color:var(--on-cyan);font-weight:600;background:var(--brand-cyan);border-color:var(--brand-cyan);}
+  .pager button:disabled{opacity:.4;cursor:not-allowed;}
+  .pager .pg-go{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--neutral);white-space:nowrap;}
+  .pager .pg-go input{width:46px;height:28px;padding:0 6px;text-align:center;font-family:inherit;font-size:12px;
+    color:var(--text);background:rgba(18,62,92,.7);border:1px solid var(--border-base);border-radius:2px;}
+  .pager .pg-go input:focus,.pager select.pg-size:focus{outline:none;border-color:var(--brand-cyan);box-shadow:0 0 8px var(--glow);}
+  .am-card{background:rgba(9,38,64,.46);border:1px solid var(--border-soft);border-radius:2px;
+    padding:10px 14px;display:flex;flex-direction:column;min-width:0;min-height:0;}
+  .am-card h3{font-size:15px;font-weight:600;color:var(--text);letter-spacing:.5px;}
+  .am-card .sub{font-size:12px;color:var(--neutral);margin-top:2px;}
+  .am-card-hd{display:flex;align-items:center;gap:14px;flex:0 0 auto;}
+  .am-period-row{display:flex;align-items:center;gap:14px;flex:0 0 auto;padding:0 2px 12px;
+    font-size:14px;color:var(--text-secondary);}
+  .am-period-row .lb{font-weight:600;color:var(--text);}
+  .am-grid{display:grid;gap:14px;}
+  .am-r1{grid-template-columns:1.08fr .92fr;height:264px;}
+  .am-r2{grid-template-columns:1fr 1fr;height:246px;margin-top:14px;}
+  .am-r3{grid-template-columns:1fr 1fr;height:234px;margin-top:14px;}
+  .am-chart{flex:1;min-height:0;margin-top:6px;}
+  .am-chart svg{width:100%;height:100%;display:block;}
+  .am-legend{display:flex;gap:18px;align-items:center;font-size:12px;color:var(--text-secondary);margin-top:5px;}
+  .am-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;}
+  .am-legend .unit{margin-left:auto;color:var(--neutral);}
+  .am-period{display:flex;gap:5px;}
+  .am-period button{font-size:12px;color:var(--text-secondary);padding:3px 10px;cursor:pointer;
+    background:rgba(18,62,92,.55);border:1px solid var(--border-soft);border-radius:2px;}
+  .am-period button.on{color:var(--on-cyan);font-weight:600;background:var(--brand-cyan);border-color:var(--brand-cyan);}
+  .level-box{display:flex;align-items:center;gap:22px;flex:1;min-height:0;padding:0 8px 10px 0;}
+  .level-box .am-chart{width:42%;margin:0;}
+  .level-legend{flex:1;display:flex;flex-direction:column;gap:9px;font-size:13px;color:var(--text-secondary);}
+  .level-legend div{display:flex;align-items:center;gap:8px;}
+  .level-legend i{width:9px;height:9px;border-radius:50%;box-shadow:0 0 6px currentColor;}
+  .level-legend em{font-style:normal;color:var(--brand-cyan);font-size:13px;min-width:44px;text-align:right;}
+  .level-legend b{min-width:44px;text-align:right;color:var(--text);font-size:15px;}
+  .status-list{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:0 4px;}
+  .status-row .top{display:flex;align-items:baseline;font-size:14px;color:var(--text-secondary);}
+  .status-row .top b{margin-left:auto;font-size:19px;color:var(--text);}
+  .status-row .top small{font-size:12px;color:var(--neutral);margin-left:6px;}
+  .status-bar{height:10px;margin-top:6px;border-radius:5px;background:rgba(150,205,220,.12);overflow:hidden;}
+  .status-bar i{display:block;height:100%;border-radius:5px;box-shadow:0 0 8px currentColor;}
+  .sys-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);
+    gap:10px;margin-top:10px;flex:1;min-height:0;}
+  .sys-cell{display:flex;align-items:center;gap:10px;min-width:0;
+    border:1px solid var(--border-soft);border-radius:2px;padding:8px 12px;background:rgba(18,62,92,.35);}
+  .sys-ring{width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:grid;place-items:center;
+    color:var(--sc);border:2px solid var(--sc);box-shadow:0 0 12px var(--sc),inset 0 0 10px var(--sc);}
+  .sys-ring svg{width:23px;height:23px;}
+  .sys-txt{min-width:0;line-height:1.3;}
+  .sys-txt b{display:block;font-size:14px;color:var(--text);white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis;}
+  .sys-txt span{font-size:18px;font-weight:700;color:var(--sc);}
+
+  /* 图表 hover 数值标签（参考指挥大屏，挂在 #stage 外按 --s 缩放） */
+  .chart-tip{position:fixed;z-index:80;display:none;pointer-events:none;
+    min-width:calc(112px * var(--s,1));max-width:calc(300px * var(--s,1));
+    padding:calc(7px * var(--s,1)) calc(11px * var(--s,1));
+    border:1px solid var(--border-base);border-radius:calc(3px * var(--s,1));
+    background:rgba(8,32,56,.97);box-shadow:0 6px 18px rgba(0,0,0,.4);
+    color:var(--text);font-size:calc(12px * var(--s,1));line-height:1.5;white-space:normal;
+    font-variant-numeric:tabular-nums;}
+  .chart-tip .ct-title{color:var(--brand-cyan);font-weight:600;font-size:inherit;
+    margin-bottom:calc(3px * var(--s,1));padding-bottom:calc(3px * var(--s,1));
+    border-bottom:1px solid var(--border-soft);}
+  .chart-tip .ct-row{display:flex;justify-content:space-between;align-items:baseline;
+    gap:calc(18px * var(--s,1));line-height:1.7;}
+  .chart-tip .ct-k{color:var(--text-secondary);white-space:nowrap;}
+  .chart-tip .ct-v{color:var(--text);font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;}
+</style>
+
+
+<div id="stage" data-page-node-id="XdAcmA0ofQ0FCaO1Kmhr7t">
+ <div id="screen" data-page-node-id="yRMa5Lp8NwTE9g07ayRVlu">
+  <header data-page-node-id="FCFLOACPfAOExFE4rUGeKA">
+    <div class="hd-left" data-page-node-id="uM4sKRl577vV7YGtv5tnBD"><img class="logo" src="../assets/images/logo.png" width="40" height="40" alt="中建四局模块建筑科技公司" data-page-node-id="logoImg"></div>
+    <div class="hd-title" data-page-node-id="tYfpZrYBiNg9DLTObpH6LE">脉动智能产线<span data-page-node-id="w1QwfqUHzBXFJ7RLPt5SoK">·</span>钢筋网片工作站</div>
+    <div class="hd-right" data-page-node-id="GnXMNfVr5m2fvaA0zE9ng0"><div data-page-node-id="reW9k1fAJzEbLAFhJwyH43"><b id="clock" data-page-node-id="BZaHWEnFQNhJpWS2zCZdBA">16:29:00</b>　<span id="date" data-page-node-id="GUcBOBXBokV2KUgJXpTSB5">2026/10/28</span></div><div id="week" data-page-node-id="QE0xhzmnhrThUEoWobSDrC"></div></div>
+  </header>
+
+  <div class="main">
+    <!-- 左列 -->
+    <div class="col-left">
+      <div class="panel" style="flex:0 0 282px;">
+        <div class="p-head"><i class="dia"></i>工位任务清单</div>
+        <div class="p-body">
+          <table>
+            <thead><tr><th>工单 / 产品</th><th>类型 / 产线</th><th>班组 / 接单人</th><th>计划日期 / 交期</th><th>数量 / 进度</th><th>当前工序</th><th>工单状态</th></tr></thead>
+            <tbody id="taskBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel proc">
+        <div class="p-head"><i class="dia"></i>作业标准：<span id="sopTitle">作业前准备作业标准</span></div>
+        <div class="p-body" style="display:flex;flex-direction:column;">
+          <div class="proc-meta">
+            <span>项目名称：<b id="projName">科创园混凝土模块办公楼</b></span>
+            <span>计划数：<b id="procMods">3</b></span>
+            <span class="right">
+              <span>计划日期：<b id="procPlanDate" class="ok">--</b></span>
+              <span>完成率：<b id="procProg" class="warn">30%</b></span>
+            </span>
+          </div>
+          <div class="std-steps" id="stdSteps"></div>
+          <div class="sop-main">
+            <div class="sop-pic">
+              <img id="sopImg" src="../assets/images/sop-personnel.png" alt="作业标准图片">
+              <span class="pic-tag" id="sopPicTag">标准图片 · 人员准备</span>
+            </div>
+            <div class="sop-detail">
+              <div class="sop-hd"><span class="sop-num" id="sopNum">1</span><b id="sopName">人员准备</b><span class="sop-counter" id="sopCounter">1 / 4</span></div>
+              <div class="sop-sec"><div class="sec-h">工作要点</div><ul id="sopPoints"></ul></div>
+              <div class="sop-sec note"><div class="sec-h note">注意事项</div><ul id="sopNotes"></ul></div>
+            </div>
+          </div>
+          <div class="sop-bottom">
+            <div class="sop-stations"><span id="prevStation">上一站：—</span><span class="st-sep"></span><span id="nextStation">下一站：—</span></div>
+            <div class="sop-nav">
+              <button class="nav-arrow" id="sopPrev" title="上一项" aria-label="上一项">‹</button>
+              <div class="sop-dots" id="sopDots"></div>
+              <button class="nav-arrow" id="sopNext" title="下一项" aria-label="下一项">›</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右列 -->
+    <div class="col-right">
+      <div class="panel" style="flex:0 0 282px;">
+        <div class="p-head"><i class="dia"></i>人员信息</div>
+        <div class="p-body" style="display:flex;flex-direction:column;padding:10px 12px;">
+          <div class="team-head" id="teamHead"></div>
+          <div class="roll-view"><div class="roll-track" id="rollTrack"></div></div>
+          <div class="ppl-dots" id="pplDots"></div>
+        </div>
+      </div>
+
+      <div class="panel" style="flex:1 1 auto;">
+        <div class="p-head"><i class="dia"></i>质量与仓储分析
+          <div class="qa-period" id="qaPeriod">
+            <button class="on" data-p="今日">今日</button><button data-p="本周">本周</button><button data-p="本月">本月</button><button data-p="本年">本年</button>
+          </div>
+        </div>
+        <div class="p-body qa-body">
+          <div class="qa-main">
+            <div class="qa-col left">
+              <div class="qa-sec">质量分析</div>
+              <div class="qa-legend">
+                <span><i class="lg-plan"></i>计划产出</span>
+                <span><i class="lg-act"></i>实际产出</span>
+                <span><i class="lg-rate"></i>合格率</span>
+              </div>
+              <div class="chart" id="chart"></div>
+            </div>
+            <div class="qa-col">
+              <div class="qa-sec">仓储出入库</div>
+              <div class="wh-panel">
+                <div class="wh-donut-wrap" id="whDonut">
+                  <div class="wh-donut-mid"><b id="whStockNum">12</b><span>库存总数 / 片</span></div>
+                </div>
+                <div class="wh-right">
+                  <div class="wh-cells" id="whRow"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="flex:0 0 330px;">
+        <div class="p-head"><i class="dia"></i>故障告警<button class="view-btn" id="alarmViewBtn">查看</button></div>
+        <div class="p-body" style="display:flex;flex-direction:column;">
+          <div class="alarm-wrap">
+            <div class="alarm-list" id="alarmList"><div class="track" id="alarmTrack"></div></div>
+            <div class="dots" id="dots"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ </div>
+
+<!-- 故障告警详情弹窗 -->
+<div class="alarm-modal" id="alarmModal" role="dialog" aria-modal="true" aria-label="故障告警详情">
+  <div class="am-panel">
+    <div class="am-head"><i class="dia"></i>故障告警详情
+      <div class="am-tabs">
+        <button class="am-tab active" data-tab="info">告警信息</button>
+        <button class="am-tab" data-tab="stat">告警统计</button>
+      </div>
+      <button class="am-close" id="alarmClose" aria-label="关闭" title="关闭">×</button>
+    </div>
+    <div class="am-body">
+      <div class="am-view active" id="amInfo">
+        <div class="info-tabs">
+          <button class="on" data-list="stock">安全库存预警清单</button>
+          <button data-list="iot">IOT设备告警</button>
+        </div>
+        <div class="filter-bar">
+          <label>编号<input id="fNo" type="text" placeholder="请输入编号"></label>
+          <label>名称<input id="fName" type="text" placeholder="请输入名称"></label>
+          <label>分类<input id="fCat" type="text" placeholder="请输入分类"></label>
+          <button class="f-btn primary" id="btnQuery">查询</button>
+          <button class="f-btn" id="btnReset">重置</button>
+        </div>
+        <table class="info-table">
+          <colgroup id="infoCols"></colgroup>
+          <thead><tr id="infoHead"></tr></thead>
+          <tbody id="infoBody"></tbody>
+        </table>
+        <div class="pager" id="infoPager"></div>
+      </div>
+
+      <div class="am-view" id="amStat">
+        <div class="am-period-row"><span class="lb">统计周期</span>
+          <div class="am-period" id="alarmPeriod">
+            <button class="on" data-p="今日">今日</button><button data-p="本周">本周</button><button data-p="本月">本月</button><button data-p="本年">本年</button>
+          </div>
+        </div>
+        <div class="am-grid am-r1">
+          <div class="am-card">
+            <h3>各库安全库存预警数量</h3>
+            <div class="am-legend"><span><i style="background:var(--brand-cyan)"></i>低于安全库存</span><span><i style="background:var(--success)"></i>超最高库存</span><span class="unit">单位：条</span></div>
+            <div class="am-chart" id="stockChart"></div>
+          </div>
+          <div class="am-card">
+            <h3>报警趋势</h3>
+            <div class="am-chart" id="trendChart"></div>
+          </div>
+        </div>
+        <div class="am-grid am-r2">
+          <div class="am-card">
+            <h3>告警类型分布</h3>
+            <div class="am-chart" id="typeChart"></div>
+          </div>
+          <div class="am-card">
+            <h3>告警等级</h3>
+            <div class="level-box">
+              <div class="am-chart" id="levelChart"></div>
+              <div class="level-legend" id="levelLegend"></div>
+            </div>
+          </div>
+        </div>
+        <div class="am-grid am-r3">
+          <div class="am-card">
+            <h3>告警状态分布</h3>
+            <div class="status-list" id="statusList"></div>
+          </div>
+          <div class="am-card">
+            <h3>报警系统分布</h3>
+            <div class="sys-grid" id="sysGrid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- hover 数值标签放在 #stage 外，避免 transform 影响 fixed 定位 -->
+<div class="chart-tip" id="alarmChartTip"></div>
+
+<script>
+/* 颜色统一从设计令牌读取：换风格只改 :root，不改业务代码 */
+const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const C={success:cssVar('--success'),warning:cssVar('--warning'),danger:cssVar('--danger'),
+  info:cssVar('--info'),neutral:cssVar('--neutral'),line:cssVar('--border-base'),
+  chart1:cssVar('--chart-1'),chart2:cssVar('--chart-2'),chartTrack:cssVar('--chart-track'),
+  stage:cssVar('--bg-stage'),stage2:cssVar('--bg-stage-2'),text:cssVar('--text')};
+
+/* ================= 时钟 ================= */
+const WK=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+function tick(){
+  const d=new Date();
+  const p=n=>String(n).padStart(2,'0');
+  clock.textContent=`${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+  date.textContent=`${d.getFullYear()}/${p(d.getMonth()+1)}/${p(d.getDate())}`;
+  week.textContent='';
+}
+setInterval(tick,1000);tick();
+
+/* ================= 缩放适配 ================= */
+function fit(){
+  const s=Math.min(innerWidth/1920,innerHeight/1080);
+  document.documentElement.style.setProperty('--s',s);
+}
+addEventListener('resize',fit);fit();
+
+/* ================= 各工序联动数据 =================
+   计划数/完成率/计划日期均来自 MES 工单生产监控（工单主数据 + 累计报工） */
+let ACTIVE_STEP = 2;   // 0-based，与步骤条（SOP_S）同步
+/* 人员信息：班组来自 MES 班组资源配置 platform/team
+   （班组名称 / 班组长 / 在编人数 / 班组成员：头像·姓名·部门·班组角色） */
+const TEAMS={
+ '钢筋一班':{code:'TEAM-001',leader:'王建国',qty:4,members:[
+   {name:'王建国',dept:'构件生产一部',role:'班长',avatar:'../assets/images/worker-1.png'},
+   {name:'李长顺',dept:'构件生产一部',role:'组员',avatar:'../assets/images/worker-2.png'},
+   {name:'赵铁柱',dept:'构件生产一部',role:'组员',avatar:'../assets/images/worker-3.png'},
+   {name:'林正雄',dept:'构件生产一部',role:'组员',avatar:'../assets/images/worker-4.png'}
+ ]},
+ '钢筋二班':{code:'TEAM-002',leader:'李长顺',qty:4,members:[
+   {name:'李长顺',dept:'构件生产一部',role:'班长',avatar:'../assets/images/worker-2.png'},
+   {name:'陈国平',dept:'构件生产一部',role:'组员',avatar:'../assets/images/worker-3.png'},
+   {name:'王建军',dept:'构件生产一部',role:'组员',avatar:'../assets/images/worker-4.png'},
+   {name:'赵刚',  dept:'构件生产一部',role:'组员',avatar:''}
+ ]}
+};
+/* 工序执行任务：MES 工单生产监控详情 → 工艺路线 → 工序执行任务
+   （工序 / 状态 / 计划数量 / 实际报工 / 开始时间 / 结束时间） */
+const EXEC_TASKS=[
+ [ {proc:'调直切断',status:'已完成',plan:3,report:3,start:'2026-10-27 07:20',end:'2026-10-27 07:56'},
+   {proc:'钢筋摆放',status:'已完成',plan:3,report:3,start:'2026-10-27 07:56',end:'2026-10-27 08:12'},
+   {proc:'钢筋绑扎',status:'生产中',plan:3,report:2,start:'2026-10-27 08:12',end:'—'},
+   {proc:'缓存入库',status:'待生产',plan:3,report:0,start:'—',end:'—'} ],
+ [ {proc:'调直切断',status:'已完成',plan:2,report:2,start:'2026-10-27 07:20',end:'2026-10-27 07:52'},
+   {proc:'钢筋摆放',status:'生产中',plan:2,report:1,start:'2026-10-27 07:52',end:'—'},
+   {proc:'钢筋绑扎',status:'待生产',plan:2,report:0,start:'—',end:'—'},
+   {proc:'缓存入库',status:'待生产',plan:2,report:0,start:'—',end:'—'} ],
+ [ {proc:'调直切断',status:'待生产',plan:3,report:0,start:'—',end:'—'},
+   {proc:'钢筋摆放',status:'待生产',plan:3,report:0,start:'—',end:'—'},
+   {proc:'钢筋绑扎',status:'待分配',plan:3,report:0,start:'—',end:'—'},
+   {proc:'缓存入库',status:'待分配',plan:3,report:0,start:'—',end:'—'} ]
+];
+let SELECTED_TASK=0;
+/* 每作业标准下 3 张工单的「当前工序 currentProcess」与「累计报工 reportQty」 */
+const STEP_TASK=[
+  [ {stage:'调直上料',done:3}, {stage:'调直上料',done:2}, {stage:'调直上料',done:2} ],
+  [ {stage:'钢筋摆放',done:2}, {stage:'钢筋摆放',done:1}, {stage:'钢筋摆放',done:1} ],
+  [ {stage:'索驱绑扎',done:2}, {stage:'钢索对位',done:1}, {stage:'待绑扎',  done:0} ],
+  [ {stage:'库位分配',done:3}, {stage:'网片入库',done:1}, {stage:'待入库',  done:1} ],
+  [ {stage:'投放对位',done:2}, {stage:'夹取投放',done:1}, {stage:'待投放',  done:1} ],
+];
+const rollTrack=document.getElementById('rollTrack');
+const pplDots=document.getElementById('pplDots');
+const PPL_PER_PAGE=2;   // 一页最多两张卡片
+let pplPage=0, pplPages=1, pplTimer=null;
+function statusCls(s){return s==='已完成'?'done':(s==='生产中'?'run':'wait');}
+/* 一张竖卡 = 成员信息（上）+ 横线 + 该成员对应工序执行任务（下） */
+function personTaskCardHtml(p,r){
+  const av=p? (p.avatar?`<img class="pt-avatar-img" src="${p.avatar}" alt="${p.name}">`
+                        :`<span class="pt-avatar">${p.name[0]}</span>`) : '';
+  const head=p?`<div class="pt-top">${av}<span class="pt-name">${p.name}</span><span class="pt-role">${p.role}</span></div>
+    <div class="pt-dept" title="${p.dept}">${p.dept}</div>` : '';
+  const body=r?`<div class="pt-divider"></div>
+    <div class="pt-task">
+      <div class="pt-task-r1"><span class="pt-proc" title="${r.proc}">${r.proc}</span><span class="pt-st ${statusCls(r.status)}">${r.status}</span></div>
+      <div class="pt-line"><i>计划</i> ${r.plan}　<i>实际报工</i> ${r.report}</div>
+      <div class="pt-line"><i>开始</i> ${r.start}</div>
+      <div class="pt-line"><i>结束</i> ${r.end}</div>
+    </div>`:`<div class="pt-divider"></div><div class="pt-task" style="justify-content:center;color:var(--neutral)">暂无关联任务</div>`;
+  return `<div class="pt-card">${head}${body}</div>`;
+}
+/* 随左侧选中工单联动：班组信息 + 成员·任务合成竖卡（每卡一条任务，一页两张纵向轮播） */
+function renderPersonnel(){
+  const task=TASKS[SELECTED_TASK];
+  const team=TEAMS[task.team];
+  if(!team) return;
+  const th=document.getElementById('teamHead');
+  if(th) th.innerHTML=`班组名称：<b>${task.team}</b><span class="sep">|</span>班组长：<b>${team.leader}</b><span class="sep">|</span>在编人员：<b>${team.qty}</b> 人`;
+  const rows=EXEC_TASKS[SELECTED_TASK]||[];
+  /* 每张卡对应一名成员 + 一条工序执行任务；成员不足时用班组长占位 */
+  const cards=rows.map((r,i)=>personTaskCardHtml(team.members[i]||team.members[0],r));
+  pplPages=Math.max(1,Math.ceil(cards.length/PPL_PER_PAGE));
+  pplPage=Math.min(pplPage,pplPages-1);
+  if(rollTrack){
+    let html='';
+    for(let pg=0;pg<pplPages;pg++){
+      html+=`<div class="roll-page">${cards.slice(pg*PPL_PER_PAGE,(pg+1)*PPL_PER_PAGE).join('')}</div>`;
+    }
+    rollTrack.innerHTML=html;
+    rollTrack.style.transform=`translateY(-${pplPage*100}%)`;
+  }
+  if(pplDots){
+    pplDots.innerHTML=Array.from({length:pplPages},(_,i)=>`<i class="${i===pplPage?'on':''}" data-pg="${i}"></i>`).join('');
+    pplDots.querySelectorAll('i').forEach(d=>d.addEventListener('click',()=>{goPplPage(Number(d.dataset.pg));restartPplTimer();}));
+  }
+}
+/* 纵向轮播翻页 */
+function goPplPage(pg){
+  pplPage=(pg%pplPages+pplPages)%pplPages;
+  if(rollTrack) rollTrack.style.transform=`translateY(-${pplPage*100}%)`;
+  if(pplDots) pplDots.querySelectorAll('i').forEach((d,i)=>d.classList.toggle('on',i===pplPage));
+}
+function restartPplTimer(){
+  if(pplTimer) clearInterval(pplTimer);
+  if(pplPages>1) pplTimer=setInterval(()=>goPplPage(pplPage+1),4000);
+}
+/* 项目名称/计划数/计划日期/完成率：随「工位任务清单」选中工单联动
+   （计划日期取工单编号中的年月日；完成率 = 该标准下该工单已完成 / 计划数） */
+function updateProcMeta(){
+  const t=TASKS[SELECTED_TASK];
+  const ovr=STEP_TASK[ACTIVE_STEP];
+  const done=ovr? ovr[SELECTED_TASK].done : 0;
+  const prog=Math.min(100,Math.round(done/t.qty*100));
+  const proj=document.getElementById('projName'), qty=document.getElementById('procMods');
+  const plan=document.getElementById('procPlanDate'), progEl=document.getElementById('procProg');
+  if(proj) proj.textContent=t.proj;
+  if(qty) qty.textContent=t.qty;
+  if(plan) plan.textContent=t.wo.slice(6,10)+'-'+t.plan;   /* WO-CM-20261027-012 → 2026-10-27 */
+  if(progEl){ progEl.textContent=prog+'%'; progEl.style.color=(prog>=60?C.success:C.warning); }
+}
+/* 上一站/下一站：跟随面板标题（选中的作业标准）动态显示
+   产线路线：产线起点 → 4 个作业标准 → 底板混凝土整平 */
+const STATION_ROUTE=['作业前准备','钢筋加工与铺设','钢筋绑扎与存储','网片投放和设备归位'];
+function updateStations(){
+  const prev=ACTIVE_STEP>0? STATION_ROUTE[ACTIVE_STEP-1] : '产线起点';
+  const next=ACTIVE_STEP<STATION_ROUTE.length-1? STATION_ROUTE[ACTIVE_STEP+1] : '底板混凝土整平';
+  const pEl=document.getElementById('prevStation'), nEl=document.getElementById('nextStation');
+  if(pEl) pEl.innerHTML='上一站：<b>'+prev+'</b>';
+  if(nEl) nEl.innerHTML='下一站：<b>'+next+'</b>';
+}
+
+/* ================= 工位任务清单 =================
+   字段全部取自 MES「工单生产监控 /execution/work-order」：
+   workOrderNo / projectName / productName+产线 / 班组+接单人 / 计划日期+交期 / planQty+累计报工 / currentProcess / productionStatus */
+/* 工单状态枚举（MES mes_wo_status）：待接单 / 待生产 / 生产中 / 已完成 / 异常 */
+const TASKS=[
+ {wo:'WO-CM-20261027-012',proj:'科创园混凝土模块办公楼',prod:'钢筋网片',line:'智能产线',team:'钢筋一班',owner:'王建国',plan:'10-27',due:'10-31',delay:true, qty:3},
+ {wo:'WO-CM-20261027-013',proj:'科创园混凝土模块办公楼',prod:'钢筋网片',line:'智能产线',team:'钢筋二班',owner:'李长顺',plan:'10-27',due:'10-31',delay:true, qty:2},
+ {wo:'WO-CM-20261028-006',proj:'混凝土模块标准厂房',   prod:'钢筋网片',line:'智能产线',team:'钢筋一班',owner:'王建国',plan:'10-28',due:'11-01',delay:false,qty:3}
+];
+function woStatus(done,qty){return done<=0?'待生产':(done>=qty?'已完成':'生产中');}
+function bar(pct,cls){const w=Math.min(100,Math.max(0,pct));return `<div class="pbar ${cls||''}"><i style="width:${w}%"></i><em>${w}%</em></div>`;}
+function renderTasks(){
+  const ovr=STEP_TASK[ACTIVE_STEP];
+  const tb=document.getElementById('taskBody');
+  tb.innerHTML=TASKS.map((t,i)=>{
+    const done=ovr? ovr[i].done : 0;
+    const p=Math.round(done/t.qty*100);
+    const stage=ovr? ovr[i].stage : t.stage;
+    const st = woStatus(done,t.qty);
+    const cls = done<=0?'t-wait':(done>=t.qty?'t-ok':'t-run');
+    return `<tr class="${i===SELECTED_TASK?'sel':''}" data-task="${i}">
+     <td style="text-align:left"><b style="color:var(--info)">${t.wo}</b><br><span style="font-size:12px">${t.proj}</span></td>
+     <td>${t.prod}<br><span style="font-size:12px">${t.line}</span></td>
+     <td>${t.team}<br><span style="font-size:12px">${t.owner}</span></td>
+     <td>${t.plan}<br><span style="font-size:12px;color:${t.delay?'var(--danger)':'var(--neutral)'}">交期 ${t.due}${t.delay?' 已延期':''}</span></td>
+     <td class="pc"><span>计划 ${t.qty} 件 · 已完成 ${done} 件</span>${bar(p)}</td>
+     <td class="stage">${stage}</td>
+     <td><span class="tag ${cls}">${st}</span></td></tr>`;
+  }).join('');
+}
+renderTasks();
+/* 选中左侧工单 → 项目信息 / 人员信息 联动 */
+document.getElementById('taskBody').addEventListener('click',e=>{
+  const tr=e.target.closest('tr[data-task]');
+  if(!tr) return;
+  SELECTED_TASK=Number(tr.dataset.task);
+  pplPage=0;
+  renderTasks();
+  updateProcMeta();
+  renderPersonnel();
+  restartPplTimer();
+});
+
+/* ================= 仓储出入库（MES 仓储管理 warehouse/mould）· 环形饼图 · 周期联动 =================
+   库存总数为当前时点快照（12 片），入库/出库数量随今日/本周/本月/本年维度切换 */
+const WH_PERIOD={
+ '今日':{in:3,  out:2,  stock:12},
+ '本周':{in:18, out:15, stock:12},
+ '本月':{in:77, out:65, stock:12},
+ '本年':{in:892,out:810,stock:12},
+};
+function renderWarehouse(p){
+  const d=WH_PERIOD[p]||WH_PERIOD['今日'], sum=d.in+d.out;
+  /* 环形饼图：当前周期入库 / 出库 占比 */
+  const R=62,CX=84,CY=84,CIR=2*Math.PI*R;
+  const inRatio=d.in/sum, outRatio=d.out/sum;
+  const inLen=CIR*inRatio, outLen=CIR*outRatio;
+  const donut=document.getElementById('whDonut');
+  if(donut){
+    const svg=`<svg viewBox="0 0 168 168" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="wdIn" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${C.chart1}"/><stop offset="1" stop-color="${C.chart2}"/></linearGradient>
+        <linearGradient id="wdOut" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${C.success}"/><stop offset="1" stop-color="#2E9E78"/></linearGradient>
+      </defs>
+      <circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${C.chartTrack}" stroke-width="15"/>
+      <circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="url(#wdIn)" stroke-width="15"
+        stroke-dasharray="${inLen.toFixed(1)} ${(CIR-inLen).toFixed(1)}" stroke-dashoffset="0"
+        transform="rotate(-90 ${CX} ${CY})" data-tip="${p}入库：${d.in} 片 / 占比 ${(inRatio*100).toFixed(1)}%"/>
+      <circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="url(#wdOut)" stroke-width="15"
+        stroke-dasharray="${outLen.toFixed(1)} ${(CIR-outLen).toFixed(1)}" stroke-dashoffset="${(-inLen).toFixed(1)}"
+        transform="rotate(-90 ${CX} ${CY})" data-tip="${p}出库：${d.out} 片 / 占比 ${(outRatio*100).toFixed(1)}%"/>
+    </svg>`;
+    /* 连同中心「库存总数」标签一起重建，避免周期切换时叠加 SVG */
+    donut.innerHTML=svg+`<div class="wh-donut-mid"><b>${d.stock}</b><span>库存总数 / 片</span></div>`;
+  }
+  const el=document.getElementById('whRow');
+  if(el){
+    el.innerHTML=`
+     <div class="wh-cell in" data-tip="${p}入库：${d.in} 片"><div class="wh-k">入库</div><div class="wh-v">${d.in}<small>片</small></div></div>
+     <div class="wh-cell out" data-tip="${p}出库：${d.out} 片"><div class="wh-k">出库</div><div class="wh-v">${d.out}<small>片</small></div></div>`;
+  }
+}
+renderWarehouse('今日');
+
+/* ================= M0 工序步骤条（4 个作业标准）+ 标准作业视图轮播 =================
+   节点序列取《产品需求分析报告》§2.2「钢筋网片工作站」的 4 个作业标准；
+   每条作业过程含工作要点 / 标准图片 / 注意事项，5s 自动轮播，点击圆点或左右箭头切换。 */
+const IMG_3D='../assets/images/sop-equipment-3d.png';
+const IMG_TOP='../assets/images/sop-layout-top.png';
+const SOP_STANDARDS=[
+ {name:'作业前准备作业标准',items:[
+  {name:'人员准备',img:'../assets/images/sop-personnel.png',fit:'contain',
+   points:[
+    '1.1 操作人员需持证上岗（刷面识别），未刷卡或未授权人员禁止启动设备。',
+    '1.2 熟悉龙门桁架、移动模台、索驱绑扎机器人、钢筋网片投放夹取末端、视觉系统等操作规范。',
+    '1.3 经过专项工序培训，掌握工艺节拍、钢筋摆放间距、绑扎要求、投放精度及工作站各系统操作标准。',
+    '1.4 穿戴劳保服、防滑手套、防护鞋，进入作业区佩戴安全帽及必要防护用品。'],
+   notes:[
+    '身体状态良好：作业前禁止饮酒、服用影响精神状态的药物；若存在疲劳、眩晕等不适症状，应立即更换作业人员。',
+    '熟悉急停按钮位置和操作；发生异常时立即停机。',
+    '严禁未穿戴完整防护用品进入作业区域。'],
+   params:[['持证上岗','100%'],['急停按钮','已释放'],['防护用品','齐全']]},
+  {name:'设备准备(一)',img:IMG_3D,fit:'cover',pos:'28% 50%',
+   points:[
+    '2.1 安全围栏与联锁：检查一层工作站及夹层投放口安全围栏完整性、安全门锁闭合状态、急停按钮是否处于释放位置。',
+    '2.2 龙门桁架：检查机械结构、导轨、伺服电机及限位开关；空载试运行确认 X/Y/Z 轴运动平稳、无异响。',
+    '2.3 移动模台：检查轨道、卡槽模具、限位挡块，确认流转定位功能正常。'],
+   notes:[
+    '进入机械手或索驱作业区域前，须确保关闭主电源并将电源接头卸下。',
+    '检查各轴限位开关、安全门、急停按钮功能正常。',
+    '确认视觉系统标定状态及相机镜头清洁度。'],
+   params:[['安全围栏','完整'],['急停按钮','已释放'],['视觉标定','正常']]},
+  {name:'设备准备(二)',img:IMG_3D,fit:'cover',pos:'78% 48%',
+   points:[
+    '2.4 索驱绑扎系统：检查八根钢索张力、滑轮、静平台连接状态，确认无缠绕、松弛或异常磨损。',
+    '2.5 钢筋网片投放夹取末端：检查多点气动夹爪、断气保压功能、网片位置检测功能。',
+    '2.6 钢筋调直切断及上料设备：检查调直切断机、上料设备运行状态，确认无报警。',
+    '2.7 缓存货架：确认 4 个库位空置或状态正常，限位挡块可调。'],
+   notes:[
+    '钢索出现异常磨损、断丝或张力不均时，禁止开机，须先处理。',
+    '夹爪活动行程异常或断气保压功能失效时，禁止使用。',
+    '严禁短接或屏蔽安全联锁装置。'],
+   params:[['钢索张力','正常'],['夹爪保压','有效'],['缓存库位','4 位']]},
+  {name:'物料与环境准备',img:IMG_TOP,fit:'cover',pos:'50% 52%',
+   points:[
+    '3.1 确认一层及夹层安全围栏内无人员、无工具、无杂物遗留。',
+    '3.2 检查各急停按钮是否处于释放状态，安全门锁是否闭合。',
+    '3.3 确认钢筋原料（盘条或直条）供应充足，备用绑丝数量满足当班需求。',
+    '3.4 系统自检报警时，记录报警代码，排查后方可继续开机。'],
+   notes:[
+    '严禁在安全围栏未闭合、安全门未锁闭的情况下启动设备。',
+    '开机前确认移动模台轨道及一层模台轨道上无其他设备或障碍物。',
+    '关机前或长时间停机时，须确认所有执行末端已回到安全位置。'],
+   params:[['钢筋原料','充足'],['备用绑丝','满足当班'],['环境清理','完成']]}
+ ]},
+ {name:'钢筋加工与铺设作业标准',items:[
+  {name:'开机前准备',img:'../assets/images/sop-process-1.png',fit:'contain',
+   points:[
+    '1.1 确认一层及夹层安全围栏内无人员、无工具、无杂物遗留。',
+    '1.2 检查各急停按钮是否处于释放状态，安全门锁是否闭合。',
+    '1.3 确认钢筋原料供应充足，缓存货架 4 个库位状态正常。',
+    '1.4 系统自检报警时，记录报警代码，排查后方可继续开机。'],
+   notes:[
+    '严禁在安全围栏未闭合、安全门未锁闭的情况下启动设备。',
+    '严禁短接或屏蔽安全联锁装置。',
+    '开机前确认移动模台轨道及一层模台轨道清空。'],
+   params:[['安全围栏','闭合'],['钢筋原料','充足'],['缓存库位','4 位正常']]},
+  {name:'钢筋调直切断与上料',img:'../assets/images/sop-process-2.jpg',fit:'contain',
+   points:[
+    '2.1 系统根据图纸解析钢筋信息，启动调直切断机对盘筋进行自动矫直并定尺剪切。',
+    '2.2 专用上料设备将剪切后的钢筋按间距要求自动排布、架高，并保证两端平齐。',
+    '2.3 上料设备与抓取系统联动，实现一次抓取多根钢筋并稳定输送至摆放工位。',
+    '2.4 调直切断机适配钢筋直径 6–12mm，定尺范围满足网片需求。'],
+   notes:[
+    '调直切断过程中出现卡料、断丝或定尺偏差时，立即停机排查。',
+    '上料时确认钢筋两端齐平，限位挡块位置正确，避免后续抓取或摆放失败。',
+    '原料切换或规格变更时，须重新确认设备参数后再启动。'],
+   params:[['适配直径','6–12mm'],['定尺范围','满足网片'],['上料联动','正常']]},
+  {name:'钢筋自动摆放',img:'../assets/images/sop-process-3.jpg',fit:'contain',
+   points:[
+    '3.1 移动模台就位后，多点气动夹爪按 150mm×150mm 间距要求，将纵筋和横筋交叉摆放至卡槽模具内，形成待绑扎网格。',
+    '3.2 夹爪具备柔性调节间距功能，活动行程能克服钢筋轻微弯曲，确保抓取稳定。',
+    '3.3 摆放过程中视觉系统引导定位，保证钢筋两端齐平、网格交叉点准确。',
+    '3.4 网格间距精度应满足 150±2mm 要求。',
+    '3.5 摆放完成后，确认网片整体形态完整、无漏放、无移位。'],
+   notes:[
+    '摆放前确认移动模台卡槽模具清洁、限位挡块位置正确，适配当前网片尺寸。',
+    '抓取失败或个别钢筋未落入卡槽时，系统应报警并支持自动重试或人工干预。',
+    '严禁在视觉系统未完成定位引导的情况下强行摆放。',
+    '摆放过程中人员严禁进入移动模台作业区域。'],
+   params:[['网格间距','150±2mm'],['视觉引导','正常'],['网片成型','完整']]},
+  {name:'摆放质量确认',img:'../assets/images/sop-process-4.png',fit:'contain',
+   points:[
+    '4.1 摆放完成后，视觉系统或人工抽检确认网格间距、两端齐平度及整体尺寸。',
+    '4.2 网片成型尺寸精度要求：长度/宽度偏差≤±5mm，对角线偏差≤±10mm。',
+    '4.3 确认无漏放、无交叉错误后，允许移动模台流转至绑扎区。'],
+   notes:[
+    '质量确认不合格时，严禁流转至绑扎区，须完成整改并复检合格。',
+    '抽检点应覆盖网片四角及中部关键交叉区域。',
+    '确认完成后，记录相关数据便于追溯。'],
+   params:[['长/宽偏差','≤±5mm'],['对角偏差','≤±10mm'],['抽检覆盖','四角+中部']]}
+ ]},
+ {name:'钢筋绑扎与存储作业标准',items:[
+  {name:'移动模台流转至绑扎区',img:'../assets/images/sop-binding-1.png',fit:'contain',
+   points:[
+    '1.1 钢筋自动摆放完成并确认合格后，移动模台沿轨道自动流转至绑扎区。',
+    '1.2 流转定位精度应满足≤±1mm 要求，到位后自动锁定。',
+    '1.3 HMI 显示模台已就位，允许启动绑扎程序。'],
+   notes:[
+    '流转前确认绑扎区无人员、无障碍物，钢索及滑轮状态正常。',
+    '流转过程中严禁人员进入轨道区域。',
+    '定位失败时，须排查后重新流转，严禁强行启动绑扎。'],
+   params:[['流转定位','≤±1mm'],['到位锁定','正常'],['HMI 就位','显示']]},
+  {name:'钢筋网绑扎',img:'../assets/images/sop-binding-2.png',fit:'contain',
+   points:[
+    '2.1 索驱绑扎机器人按跳绑工艺自动完成网片所有交叉点的绑扎。',
+    '2.2 绑扎效率应满足≤3s/个点要求。',
+    '2.3 绑扎过程中实时监控钢索张力与同步性，确保动作平稳。',
+    '2.4 绑扎完成后，视觉系统或检测装置对成型质量进行检查，数据上传云端。',
+    '2.5 绑扎合格率应≥95%（节点无漏绑/松绑）。'],
+   notes:[
+    '绑扎前确认八根钢索张力正常、无缠绕、无异常磨损。',
+    '出现漏绑、松绑或钢索异常时，系统应报警并支持补绑或停机处理。',
+    '绑扎过程中人员严禁进入索驱作业区域。',
+    '合格率不满足要求时，严禁流转至存储区，须完成补绑并复检。'],
+   params:[['绑扎效率','≤3s/点'],['绑扎合格率','≥95%'],['钢索监测','实时']]},
+  {name:'移动模台流转至存储区',img:'../assets/images/sop-binding-3.png',fit:'contain',
+   points:[
+    '3.1 绑扎合格后，移动模台沿轨道自动流转至存储区。',
+    '3.2 到位后自动锁定，准备网片夹取。'],
+   notes:[
+    '流转前确认存储区无人员、无障碍物。',
+    '流转过程中严禁人员进入轨道区域。',
+    '定位失败时，须排查后重新流转。'],
+   params:[['存储区','无人员障碍'],['到位锁定','正常'],['流转路径','轨道']]},
+  {name:'钢筋网存储',img:'../assets/images/sop-binding-4.jpg',fit:'contain',
+   points:[
+    '4.1 钢筋网片投放夹取末端从移动模台夹取绑扎完成的网片。',
+    '4.2 夹爪保证网片提升稳定性并减少变形，具备断气保压防坠落功能。',
+    '4.3 将网片精准码放至 4 库位缓存货架对应库位，限位挡块适配网片尺寸。',
+    '4.4 存储完成后更新库位状态，数据上传系统。'],
+   notes:[
+    '夹取前确认网片已完全脱离卡槽，无卡滞。',
+    '夹爪断气保压功能失效或网片检测异常时，禁止起吊。',
+    '码放时确认库位空置且限位挡块位置正确，避免网片变形或坠落。',
+    '库位已满时，系统应报警并禁止继续存储，须先处理后再作业。'],
+   params:[['断气保压','有效'],['缓存库位','4 位'],['库位状态','实时更新']]}
+ ]},
+ {name:'钢筋网片投放和设备归位作业标准',items:[
+  {name:'模台就位',img:'../assets/images/sop-placement-1.png',fit:'contain',
+   points:[
+    '1.1 重载 AGV 将已拼装焊接好的墙板模台沿轨道送入投放口指定位置。',
+    '1.2 模台定位后自动锁定，HMI 显示"模台就位"状态。',
+    '1.3 确认模台定位稳定，无倾斜、明显偏移。'],
+   notes:[
+    '模台进入前，确认投放夹取末端及龙门桁架已处于安全位置。',
+    '模台进入过程中，严禁人员进入一层安全围栏区域。',
+    '如遇模台定位失败，应退出后重新进入，严禁强行锁定。'],
+   params:[['重载 AGV','定位'],['模台锁定','正常'],['HMI','模台就位']]},
+  {name:'钢筋网投放',img:'../assets/images/sop-placement-2.png',fit:'contain',
+   points:[
+    '2.1 系统根据工单从 4 库位缓存货架调取对应网片，投放夹取末端夹取网片。',
+    '2.2 龙门桁架移动至投放口，视觉系统对网片位姿及盒子四面墙体内角进行检测，计算相对偏差并反馈调整。',
+    '2.3 投放过程中，重载 AGV 可根据角度偏差自动进行轻微旋转，确保网片顺利进入围合墙体。',
+    '2.4 网片下放至离地约 25mm 时，夹爪同时松开，网片落位至模台垫块上。',
+    '2.5 投放位置精度应满足 X/Y≤±10mm、θ≤0.5° 要求；网片边线与围合墙体内边线距离应≥10mm 且≤50mm。'],
+   notes:[
+    '投放前确认目标库位网片与当前盒子工单匹配，视觉检测数据有效。',
+    '出现角度偏差时，允许 AGV 自动轻微旋转纠正，精度≤0.5°；若偏差超出可纠正范围，系统应报警并停止投放。',
+    '投放过程中实时监控网片与墙体出筋、门窗洞口的相对位置，防止干涉。',
+    '夹爪断气保压功能失效或网片检测异常时，禁止继续下放。',
+    '投放完成后确认网片落位平稳、无翘起、无碰撞。'],
+   params:[['X/Y 精度','≤±10mm'],['角度偏差','θ≤0.5°'],['离地松爪','约25mm']]},
+  {name:'模台送出',img:'../assets/images/sop-placement-3.png',fit:'contain',
+   points:[
+    '3.1 确认投放合格后，模台解锁。',
+    '3.2 重载 AGV 将模台沿轨道送出工作站，进入下一工序。',
+    '3.3 模台送出过程中，投放夹取末端及龙门桁架须保持在安全位置。'],
+   notes:[
+    '模台送出前，必须确认执行末端已完全离开投放区域并锁定。',
+    '模台送出过程中，严禁人员进入一层安全围栏区域。',
+    '如遇送出异常，立即停机排查，严禁强行操作。'],
+   params:[['模台解锁','正常'],['末端位置','安全位'],['送出路径','轨道']]},
+  {name:'设备归位与清理',img:'../assets/images/sop-placement-4.png',fit:'contain',
+   points:[
+    '4.1 模台送出后，投放夹取末端及龙门桁架自动或手动回到初始安全位置。',
+    '4.2 检查夹爪、钢索、缓存货架状态，清理作业区域残留杂物。',
+    '4.3 更新库位状态，系统进入待机或准备下一循环。'],
+   notes:[
+    '设备归位后确认各轴及钢索处于安全状态，安全门锁恢复正常。',
+    '当班结束后须完成日常点检并记录。',
+    '发现夹爪、钢索或限位挡块异常时，须及时处理后再投入下一循环。'],
+   params:[['各轴/钢索','安全位'],['现场清理','完成'],['点检记录','当班完成']]}
+ ]}
+];
+let SOP_S=0,SOP_I=0,sopTimer=null;
+function renderSopSteps(){
+  const el=document.getElementById('stdSteps');
+  if(!el) return;
+  el.innerHTML=SOP_STANDARDS.map((s,i)=>`<div class="std-step ${i===SOP_S?'active':''}" data-s="${i}" title="${s.name}"><span class="n">${String(i+1).padStart(2,'0')}</span><span>${s.name}</span></div>`).join('');
+  el.querySelectorAll('.std-step').forEach(n=>n.addEventListener('click',()=>showSop(+n.dataset.s,0,true)));
+}
+function renderSopView(){
+  const std=SOP_STANDARDS[SOP_S],it=std.items[SOP_I];
+  const img=document.getElementById('sopImg');
+  if(img){
+    img.style.opacity=0;
+    img.style.objectFit=it.fit||'contain';
+    img.style.objectPosition=it.pos||'center';
+    img.alt='标准图片 · '+it.name;
+    img.onload=()=>{img.style.opacity=1;};
+    img.src=it.img;
+    setTimeout(()=>{img.style.opacity=1;},260);
+  }
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('sopPicTag','标准图片 · '+it.name);
+  set('sopName',it.name);
+  set('sopNum',(it.name.match(/^\d+/)?it.name.match(/^\d+/)[0]:String(SOP_I+1)));
+  set('sopCounter',(SOP_I+1)+' / '+std.items.length);
+  set('sopTitle',std.name);
+  const pts=document.getElementById('sopPoints'),nts=document.getElementById('sopNotes');
+  if(pts) pts.innerHTML=it.points.map(p=>`<li>${p}</li>`).join('');
+  if(nts) nts.innerHTML=it.notes.map(n=>`<li>${n}</li>`).join('');
+  const dots=document.getElementById('sopDots');
+  if(dots){
+    dots.innerHTML=std.items.map((x,i)=>`<i class="${i===SOP_I?'on':''}" data-i="${i}" title="${x.name}"></i>`).join('');
+    dots.querySelectorAll('i').forEach(d=>d.addEventListener('click',()=>showSop(SOP_S,+d.dataset.i,true)));
+  }
+  const detail=document.querySelector('.sop-detail');
+  if(detail){detail.classList.remove('sop-in');void detail.offsetWidth;detail.classList.add('sop-in');}
+}
+function showSop(s,i,manual){
+  SOP_S=s;ACTIVE_STEP=s;   /* 步骤条与任务清单共用同一标准索引 */
+  const len=SOP_STANDARDS[s].items.length;
+  SOP_I=(i%len+len)%len;
+  renderSopSteps();renderSopView();
+  renderTasks();updateProcMeta();updateStations();   /* 步骤条切换 → 任务进度/项目信息/上一站下一站联动 */
+  if(manual) restartSopTimer();
+}
+function restartSopTimer(){
+  if(sopTimer) clearInterval(sopTimer);
+  sopTimer=setInterval(()=>showSop(SOP_S,SOP_I+1,false),5000);
+}
+const prevBtn=document.getElementById('sopPrev'),nextBtn=document.getElementById('sopNext');
+if(prevBtn) prevBtn.addEventListener('click',()=>showSop(SOP_S,SOP_I-1,true));
+if(nextBtn) nextBtn.addEventListener('click',()=>showSop(SOP_S,SOP_I+1,true));
+
+renderSopSteps();
+renderSopView();
+restartSopTimer();
+updateProcMeta();
+updateStations();
+renderPersonnel();
+restartPplTimer();
+renderTasks();
+
+/* ================= 告警轮播 =================
+   统一字段：告警级别 / 告警编号 / 告警描述 / 告警类型 / 告警设备 / 触发条件 / 告警值 / 告警时间
+   MES 库存预警两种类型：低于安全库存、超最高库存（safeStock 与最高库存阈值）；
+   IOT 告警取自「告警管理-告警记录」。不展示 MES/IOT/质量等来源徽标文案 */
+const ALARMS=[
+ {lv:'warn',lvt:'一般',no:'WK-260924-001',type:'低于安全库存',dev:'钢材仓 · 绑丝',
+  cond:'当前库存 < 安全库存 25kg',value:'18kg',time:'2026-11-24 14:05:22',
+  desc:'绑丝余量低于安全库存，建议提前补料'},
+ {lv:'warn',lvt:'一般',no:'WK-260924-002',type:'超最高库存',dev:'五金仓 · 绑扎机具',
+  cond:'当前库存 > 最高库存 120 件',value:'135 件',time:'2026-11-24 11:32:10',
+  desc:'绑扎机具超出最高库存，建议暂停入库'},
+ {lv:'crit',lvt:'高',no:'ALM-260917-043',type:'状态告警',dev:'ST-MC-03 钢筋网片',
+  cond:'系统上报/上位机 · 卡丝停机',value:'卡丝停机',time:'2026-09-17 14:20:31',
+  desc:'绑扎卡丝停机，网片作业暂停'},
+ {lv:'crit',lvt:'高',no:'ALM-260917-042',type:'阈值告警',dev:'ST-MC-08 WS8-DUST-01',
+  cond:'粉尘 > 10mg/m³ 持续 30 秒',value:'12.8 mg/m³',time:'2026-09-17 14:20:31',
+  desc:'打磨区域粉尘浓度超限'},
+ {lv:'warn',lvt:'中',no:'ALM-260917-041',type:'趋势告警',dev:'ST-MC-07 WS7-VOC-01',
+  cond:'VOC > 0.35ppm 且趋势上升',value:'0.38 ppm',time:'2026-09-17 14:12:08',
+  desc:'喷涂房 VOC 浓度预警'}
+];
+const track=document.getElementById('alarmTrack'),dots=document.getElementById('dots');
+function cardHtml(a){
+  return `<div class="alarm ${a.lv}">
+    <div class="r1"><span class="lv ${a.lv}">${a.lvt}</span><span class="no">${a.no}</span>
+      <span class="pulse ${a.lv==='crit'?'':'w'}"></span><span class="time">${a.time}</span></div>
+    <div class="r2">${a.desc}</div>
+    <div class="fields">
+      <span title="${a.type}"><i>告警类型</i><b>${a.type}</b></span>
+      <span title="${a.dev}"><i>告警设备</i><b>${a.dev}</b></span>
+      <span title="${a.cond}"><i>触发条件</i><b>${a.cond}</b></span>
+      <span title="${a.value}"><i>告警值</i><b>${a.value}</b></span>
+    </div>
+  </div>`;
+}
+function render(){
+  const start=curIdx%ALARMS.length;
+  const ordered=[...ALARMS.slice(start),...ALARMS.slice(0,start)];
+  track.innerHTML=ordered.map(cardHtml).join('');
+  track.style.transform='translateY(0)';
+  dots.innerHTML=ALARMS.map((_,i)=>`<i class="${i===start?'on':''}"></i>`).join('');
+}
+let curIdx=0;
+render();
+setInterval(()=>{ curIdx=(curIdx+1)%ALARMS.length; render(); },4000);
+
+/* ================= 故障告警详情弹窗：告警信息 / 告警统计 =================
+   统计周期（今日/本周/本月/本年）对弹窗内所有指标生效 */
+const alarmModal=document.getElementById('alarmModal');
+const AB='#6FDCEA',AG='#4FD69B',AB2='#3E86B4',AG2='#2E9E72',AG3='#9BE8CD';
+const tipEsc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const MATS=[
+ {id:'YCL-HNT-TLHTNP-0001',n:'商品混凝土',c:'生产原材料',s:'商品砼',w:'地材仓'},
+ {id:'YCL-GJCL-GJ-0003',n:'钢筋网片',c:'生产原材料',s:'Φ6@200',w:'地材仓'},
+ {id:'GCL-DQCL-XH-0001',n:'线盒',c:'工程材料',s:'86型(86×86mm)厚度…',w:'五金机电仓'},
+ {id:'GCL-MC-PTM-0002',n:'内装门套',c:'工程材料',s:'900×2100',w:'生产常用物料仓'},
+ {id:'YCL-GJCL-GJ-0004',n:'预应力钢绞线',c:'生产原材料',s:'Φ15.2',w:'地材仓'}
+];
+const WH_NAMES=['钢材仓','水泥仓','五金仓','混凝土仓','模具仓','成品堆场'];
+const TYPE_NAMES=['阈值告警','趋势告警','状态告警','离线告警','AI识别告警'];
+const LEVEL_NAMES=['高级告警','中级告警','低级告警'];
+const SYS_NAMES=['工作站','能源系统','立体仓库','安防监控','信息网络'];
+const SYS_ICONS={
+ work:'<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',
+ energy:'<path d="M13 2 4 13h7l-1 9 9-12h-7l1-8z"/>',
+ store:'<path d="M3 9 12 4l9 5v10l-9 5-9-5V9z"/><path d="M3 9l9 5 9-5M12 14v10"/>',
+ security:'<path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z"/>',
+ network:'<circle cx="12" cy="5" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><path d="M12 7v4M12 11 6 17M12 11l6 6"/>',
+ total:'<path d="M4 19V9m6 10V5m6 14v-7m4 7H2"/>'
+};
+const SYS_KEYS=['work','energy','store','security','network','total'];
+const PERIOD_DATA={
+ '今日':{
+  values:[['60 m³',80,'缺 20','low'],['200 m²',50,'超 20','over'],['320 个',100,'超 20','over'],['30 套',45,'缺 15','low'],['8 吨',12,'缺 4','low']],
+  stock:[[5,1],[2,3],[8,0],[1,2],[0,4],[3,1]],
+  trend:{max:10,labels:['00:00','04:00','08:00','12:00','16:00','20:00','24:00'],
+    values:[1.5,2.9,4.9,5.5,4.3,4.1,5.2,6.7,7.2,6.5,6.3,7.4,8.0,8.2,8.0,8.6,8.4,8.7]},
+  types:[3,1,2,3,2],levels:[3,5,3],status:[7,4],systems:[3,2,2,2,2]
+ },
+ '本周':{
+  values:[['52 m³',80,'缺 28','low'],['185 m²',50,'超 15','over'],['410 个',100,'超 30','over'],['26 套',45,'缺 19','low'],['6 吨',12,'缺 6','low']],
+  stock:[[12,4],[6,8],[18,2],[4,5],[1,9],[8,3]],
+  trend:{max:40,labels:['周一','周二','周三','周四','周五','周六','周日'],values:[18,26,14,33,22,12,9]},
+  types:[8,5,7,8,6],levels:[10,14,10],status:[21,13],systems:[9,7,6,6,6]
+ },
+ '本月':{
+  values:[['44 m³',80,'缺 36','low'],['160 m²',50,'超 10','over'],['380 个',100,'超 40','over'],['22 套',45,'缺 23','low'],['5 吨',12,'缺 7','low']],
+  stock:[[28,12],[18,20],[36,6],[12,14],[4,22],[18,9]],
+  trend:{max:100,labels:['1日','5日','10日','15日','20日','25日','30日'],values:[42,58,36,74,52,66,48]},
+  types:[24,15,18,17,12],levels:[26,34,26],status:[52,34],systems:[24,17,15,15,15]
+ },
+ '本年':{
+  values:[['36 m³',80,'缺 44','low'],['140 m²',50,'超 5','over'],['350 个',100,'超 55','over'],['18 套',45,'缺 27','low'],['3 吨',12,'缺 9','low']],
+  stock:[[72,30],[45,52],[88,15],[30,36],[10,55],[45,22]],
+  trend:{max:280,labels:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+    values:[120,162,104,186,138,212,154,232,178,204,150,246]},
+  types:[70,42,51,48,34],levels:[72,96,77],status:[148,97],systems:[68,46,45,43,43]
+ }
+};
+let alarmPeriod='今日',detailRendered=false;
+
+/* 告警信息：安全库存预警清单 / IOT设备告警（筛选 + 分页固定在列表下方） */
+const IOT_ALARMS=[
+ {lv:'高',no:'ALM-260917-043',name:'绑扎卡丝，网片作业暂停',dev:'钢筋网片',sys:'ST-MC-03 · 钢筋网片',
+  type:'状态告警',cond:'设备运行状态/上位机报警：绑扎卡丝停机',src:'系统上报 · 上位机',
+  value:'卡丝停机',time:'2026-09-17 14:20:31',status:'活动'},
+ {lv:'高',no:'ALM-260917-042',name:'打磨区域粉尘浓度超限',dev:'粉尘监测',sys:'ST-MC-08 · WS8-DUST-01',
+  type:'阈值告警',cond:'粉尘 > 10mg/m³ 持续 30 秒',src:'系统上报 · 传感器',
+  value:'12.8 mg/m³',time:'2026-09-17 14:20:31',status:'活动'},
+ {lv:'中',no:'ALM-260917-041',name:'喷涂房 VOC 浓度预警',dev:'VOC监测',sys:'ST-MC-07 · WS7-VOC-01',
+  type:'趋势告警',cond:'VOC > 0.35ppm 且趋势上升',src:'系统上报 · 传感器',
+  value:'0.38 ppm',time:'2026-09-17 14:12:08',status:'活动'},
+ {lv:'一般',no:'WK-260924-001',name:'绑丝余量低于安全库存',dev:'绑丝',sys:'钢材仓 · 绑丝',
+  type:'低于安全库存',cond:'当前库存 < 安全库存 25kg',src:'MES 库存预警',
+  value:'18 kg',time:'2026-11-24 14:05:22',status:'活动'},
+ {lv:'一般',no:'WK-260924-002',name:'绑扎机具超出最高库存',dev:'绑扎机具',sys:'五金仓 · 绑扎机具',
+  type:'超最高库存',cond:'当前库存 > 最高库存 120 件',src:'MES 库存预警',
+  value:'135 件',time:'2026-11-24 11:32:10',status:'已分布'}
+];
+const INFO_SIZE_OPTIONS=[5,10,15,20,50];
+let infoPageSize=5;
+let infoList='stock',infoPage=1,infoFilters={no:'',name:'',cat:''};
+const STOCK_COLS=[14,10,9,15,13,9,9,9,12],IOT_COLS=[7,18,15,27,12,13,8];
+function stockRowHtml(m,v){
+  const low=v[3]==='low';
+  const tip=`${m.n}：物料编号 ${m.id} / 在库 ${v[0]} / 安全库存 ${v[1]} / 缺口 ${v[2]} / 状态 ${low?'低于安全库存':'超储'}`;
+  return `<tr data-tip="${tipEsc(tip)}"><td class="l"><span class="cut" title="${m.id}">${m.id}</span></td>
+    <td>${m.n}</td><td>${m.c}</td><td><span class="cut" title="${m.s}">${m.s}</span></td><td>${m.w}</td>
+    <td>${v[0]}</td><td>${v[1]}</td><td class="${low?'gap-low':'gap-over'}">${v[2]}</td>
+    <td><span class="st-tag ${low?'low':'over'}">${low?'低于安全库存':'超储'}</span></td></tr>`;
+}
+function iotRowHtml(a){
+  const tip=`${a.no}：${a.name} / 设备 ${a.dev} · ${a.sys} / 类型 ${a.type} / 触发条件 ${a.cond} / 实际值 ${a.value} / 发生时间 ${a.time} / 告警状态 ${a.status}`;
+  return `<tr data-tip="${tipEsc(tip)}">
+    <td><span class="lv-badge ${a.lv==='中'||a.lv==='一般'?'mid':''}">${a.lv}</span></td>
+    <td class="l"><span class="main">${a.no}</span><span class="sub">${a.name}</span></td>
+    <td class="l"><span class="main">${a.dev}</span><span class="sub">${a.sys}</span></td>
+    <td class="l"><span class="main">${a.type}</span><span class="sub">${a.cond}</span><span class="sub cy">${a.src}</span></td>
+    <td><b style="color:var(--text)">${a.value}</b></td><td>${a.time}</td>
+    <td><span class="st-tag ${a.status==='活动'?'active':'done'}">${a.status}</span></td></tr>`;
+}
+function infoRows(){
+  const f=infoFilters,has=(s,q)=>!q||String(s).toLowerCase().includes(q);
+  if(infoList==='stock'){
+    const d=PERIOD_DATA[alarmPeriod];
+    return MATS.map((m,i)=>({m,v:d.values[i]})).filter(o=>
+      has(o.m.id,f.no)&&has(o.m.n,f.name)&&has(o.m.c,f.cat));
+  }
+  return IOT_ALARMS.filter(a=>has(a.no,f.no)&&has(a.name,f.name)&&has(a.type,f.cat));
+}
+function renderInfoView(){
+  const rows=infoRows(),pages=Math.max(1,Math.ceil(rows.length/infoPageSize));
+  if(infoPage>pages) infoPage=pages;
+  const stock=infoList==='stock';
+  document.getElementById('infoCols').innerHTML=(stock?STOCK_COLS:IOT_COLS).map(w=>`<col style="width:${w}%">`).join('');
+  document.getElementById('infoHead').innerHTML=(stock
+    ?['物料编号','名称','分类','规格','仓库','在库','安全库存','缺口','状态']
+    :['等级','告警编号 / 名称','设备 / 所属系统','类型 / 触发条件','实际值','发生时间','告警状态']
+  ).map(h=>`<th>${h}</th>`).join('');
+  const view=rows.slice((infoPage-1)*infoPageSize,infoPage*infoPageSize);
+  document.getElementById('infoBody').innerHTML=view.length
+    ? view.map(o=>stock?stockRowHtml(o.m,o.v):iotRowHtml(o)).join('')
+    : `<tr><td colspan="${stock?9:7}" style="height:120px;color:var(--neutral)">暂无匹配数据</td></tr>`;
+  // 分页：共 N 条 · 每页条数下拉 · 页码(含上/下页) · 前往输入
+  let pg=`<span class="pg-total">共 ${rows.length} 条</span>`;
+  pg+=`<select class="pg-size" id="pgSize" aria-label="每页条数">${INFO_SIZE_OPTIONS.map(n=>`<option value="${n}" ${n===infoPageSize?'selected':''}>${n}条/页</option>`).join('')}</select>`;
+  pg+=`<span class="pg-btns">`;
+  pg+=`<button data-page="prev" ${infoPage===1?'disabled':''}>‹</button>`;
+  for(let i=1;i<=pages;i++) pg+=`<button data-page="${i}" class="${i===infoPage?'on':''}">${i}</button>`;
+  pg+=`<button data-page="next" ${infoPage===pages?'disabled':''}>›</button>`;
+  pg+=`</span>`;
+  pg+=`<span class="pg-go">前往 <input type="number" id="pgGo" min="1" max="${pages}" value="${infoPage}"> 页</span>`;
+  document.getElementById('infoPager').innerHTML=pg;
+}
+document.querySelectorAll('.info-tabs button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.info-tabs button').forEach(b=>b.classList.toggle('on',b===btn));
+    infoList=btn.dataset.list;infoPage=1;
+    document.getElementById('alarmChartTip').style.display='none';
+    renderInfoView();
+  });
+});
+document.getElementById('btnQuery').addEventListener('click',()=>{
+  infoFilters={no:document.getElementById('fNo').value.trim().toLowerCase(),
+    name:document.getElementById('fName').value.trim(),
+    cat:document.getElementById('fCat').value.trim()};
+  infoPage=1;renderInfoView();
+});
+document.getElementById('btnReset').addEventListener('click',()=>{
+  ['fNo','fName','fCat'].forEach(id=>{document.getElementById(id).value='';});
+  infoFilters={no:'',name:'',cat:''};infoPage=1;renderInfoView();
+});
+const infoPagerEl=document.getElementById('infoPager');
+infoPagerEl.addEventListener('click',e=>{
+  const b=e.target.closest('button[data-page]');if(!b||b.disabled) return;
+  const pages=Math.max(1,Math.ceil(infoRows().length/infoPageSize));
+  if(b.dataset.page==='prev') infoPage=Math.max(1,infoPage-1);
+  else if(b.dataset.page==='next') infoPage=Math.min(pages,infoPage+1);
+  else infoPage=parseInt(b.dataset.page,10);
+  renderInfoView();
+});
+// 每页条数切换：回到第 1 页重算
+infoPagerEl.addEventListener('change',e=>{
+  if(e.target.id!=='pgSize') return;
+  infoPageSize=parseInt(e.target.value,10)||5; infoPage=1; renderInfoView();
+});
+// 前往指定页：回车或失焦生效，越界自动收敛
+function gotoInputPage(el){
+  const pages=Math.max(1,Math.ceil(infoRows().length/infoPageSize));
+  let v=parseInt(el.value,10); if(!isNaN(v)){ infoPage=Math.max(1,Math.min(pages,v)); renderInfoView(); }
+}
+infoPagerEl.addEventListener('keydown',e=>{
+  if(e.target.id==='pgGo'&&e.key==='Enter') gotoInputPage(e.target);
+});
+infoPagerEl.addEventListener('blur',e=>{
+  if(e.target.id==='pgGo') gotoInputPage(e.target);
+},true);
+
+/* 各库安全库存预警数量 */
+function renderStockWarn(p){
+  const data=PERIOD_DATA[p].stock,W=760,H=210,PL=40,PR=14,PT=26,PB=28;
+  const iw=W-PL-PR,ih=H-PT-PB,gw=iw/6;
+  const peak=Math.max(...data.map(d=>Math.max(d[0],d[1])));
+  const max=Math.max(10,Math.ceil(peak*1.12/5)*5),step=max/5;
+  const g=[];
+  for(let i=0;i<=5;i++){
+    const y=PT+ih*i/5;
+    g.push(`<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="${C.line}" stroke-opacity=".28"/>`);
+    g.push(`<text x="${PL-8}" y="${y+4}" fill="${C.neutral}" font-size="12" text-anchor="end">${Math.round(max-i*step)}</text>`);
+  }
+  data.forEach((d,i)=>{
+    const cx=PL+gw*i+gw/2;
+    [[d[0],AB,-15,'低于安全库存'],[d[1],AG,7,'超最高库存']].forEach(([v,color,dx,label])=>{
+      const h=ih*v/max,x=cx+dx-10,y=PT+ih-h;
+      if(v>0){
+        g.push(`<rect x="${x}" y="${y}" width="20" height="${h}" rx="2" fill="${color}" fill-opacity=".92"/>`);
+        g.push(`<text x="${cx+dx}" y="${y-5}" fill="${color}" font-size="12" font-weight="600" text-anchor="middle">${v}</text>`);
+        g.push(`<rect x="${x}" y="${y}" width="20" height="${h}" rx="2" fill="transparent" pointer-events="all" data-tip="${tipEsc(WH_NAMES[i]+'：'+label+' '+v+' 条')}"/>`);
+      }
+    });
+    const tip=`${WH_NAMES[i]}：低于安全库存 ${d[0]} 条 / 超最高库存 ${d[1]} 条`;
+    g.push(`<rect x="${PL+gw*i}" y="${PT}" width="${gw}" height="${ih}" fill="transparent" pointer-events="all" data-tip="${tipEsc(tip)}"/>`);
+    g.push(`<text x="${cx}" y="${H-8}" fill="${C.neutral}" font-size="12" text-anchor="middle">${WH_NAMES[i]}</text>`);
+  });
+  g.push(`<line x1="${PL}" y1="${PT+ih}" x2="${W-PR}" y2="${PT+ih}" stroke="${C.line}" stroke-opacity=".5"/>`);
+  document.getElementById('stockChart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${g.join('')}</svg>`;
+}
+
+/* 报警趋势 */
+function smoothLine(pts){
+  let d=`M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+  for(let i=0;i<pts.length-1;i++){
+    const [x1,y1]=pts[i],[x2,y2]=pts[i+1],mx=((x1+x2)/2).toFixed(1);
+    d+=` C ${mx} ${y1.toFixed(1)}, ${mx} ${y2.toFixed(1)}, ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+  }
+  return d;
+}
+function renderTrend(p){
+  const t=PERIOD_DATA[p].trend,W=760,H=210,PL=48,PR=16,PT=18,PB=30;
+  const iw=W-PL-PR,ih=H-PT-PB,n=t.values.length,base=PT+ih;
+  const pts=t.values.map((v,i)=>[PL+iw*i/(n-1),base-ih*v/t.max]);
+  const path=smoothLine(pts),g=[`<defs><linearGradient id="trFill" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="${AB}" stop-opacity=".42"/><stop offset="1" stop-color="${AB}" stop-opacity=".02"/></linearGradient></defs>`];
+  for(let i=0;i<=2;i++){
+    const y=PT+ih*i/2;
+    g.push(`<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="${C.line}" stroke-opacity=".3" stroke-dasharray="5 5"/>`);
+    g.push(`<text x="${PL-10}" y="${y+4}" fill="${C.neutral}" font-size="12" text-anchor="end">${t.max-i*t.max/2}</text>`);
+  }
+  g.push(`<text x="${PL+8}" y="${PT+2}" fill="${C.neutral}" font-size="11">单位（次）</text>`);
+  g.push(`<path d="${path} L ${pts[n-1][0].toFixed(1)} ${base} L ${pts[0][0].toFixed(1)} ${base} Z" fill="url(#trFill)"/>`);
+  g.push(`<path d="${path}" fill="none" stroke="${AB}" stroke-width="2.6" style="filter:drop-shadow(0 0 5px rgba(111,220,234,.5))"/>`);
+  g.push(`<circle cx="${pts[n-1][0].toFixed(1)}" cy="${pts[n-1][1].toFixed(1)}" r="3.5" fill="${AG}" stroke="${C.stage}" stroke-width="1.5"/>`);
+  t.labels.forEach((label,i)=>{
+    const x=PL+iw*i/(t.labels.length-1);
+    g.push(`<text x="${x.toFixed(1)}" y="${H-9}" fill="${C.neutral}" font-size="11" text-anchor="middle">${label}</text>`);
+  });
+  pts.forEach((pt,i)=>{
+    const li=Math.round(i/(n-1)*(t.labels.length-1));
+    g.push(`<circle cx="${pt[0].toFixed(1)}" cy="${pt[1].toFixed(1)}" r="12" fill="transparent" pointer-events="all"
+      data-tip="${tipEsc(t.labels[li]+'：告警 '+t.values[i]+' 次')}"/>`);
+  });
+  g.push(`<line x1="${PL}" y1="${base}" x2="${W-PR}" y2="${base}" stroke="${C.line}" stroke-opacity=".5"/>`);
+  document.getElementById('trendChart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${g.join('')}</svg>`;
+}
+
+/* 告警类型分布 */
+function renderTypes(p){
+  const data=PERIOD_DATA[p].types,W=640,H=170,PL=82,PR=54,PT=8,PB=24,iw=W-PL-PR;
+  const row=(H-PT-PB)/TYPE_NAMES.length,colors=[AB,AB2,AG,AG2,AG3],g=[];
+  for(let i=0;i<=4;i++){
+    const x=PL+iw*i/4;
+    g.push(`<line x1="${x}" y1="${PT}" x2="${x}" y2="${H-PB}" stroke="${C.line}" stroke-opacity=".25"/>`);
+    g.push(`<text x="${x}" y="${H-7}" fill="${C.neutral}" font-size="11" text-anchor="middle">${Math.round(Math.max(...data)/4*i)}</text>`);
+  }
+  TYPE_NAMES.forEach((name,i)=>{
+    const v=data[i],y=PT+row*i+row/2-7;
+    g.push(`<text x="${PL-10}" y="${y+11}" fill="${C.text}" font-size="13" text-anchor="end">${name}</text>`);
+    g.push(`<rect x="${PL}" y="${y}" width="${iw}" height="14" rx="2" fill="rgba(150,205,220,.10)"/>`);
+    g.push(`<rect x="${PL}" y="${y}" width="${iw*v/Math.max(...data)}" height="14" rx="2" fill="${colors[i]}"/>`);
+    g.push(`<text x="${PL+iw*v/Math.max(...data)+7}" y="${y+12}" fill="${C.text}" font-size="12">${v} 条</text>`);
+    g.push(`<rect x="${PL}" y="${y-3}" width="${iw}" height="20" fill="transparent" pointer-events="all"
+      data-tip="${tipEsc(name+'：'+v+' 条')}"/>`);
+  });
+  document.getElementById('typeChart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${g.join('')}</svg>`;
+}
+
+/* 告警等级 */
+function renderLevels(p){
+  const data=PERIOD_DATA[p].levels,total=data.reduce((s,v)=>s+v,0);
+  const W=190,H=170,cx=86,cy=85,r=46,sw=14,circ=2*Math.PI*r;
+  let acc=0;const g=[`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(150,205,220,.12)" stroke-width="${sw}"/>`];
+  const colors=[AB,AG,AB2];
+  data.forEach((v,i)=>{
+    const len=circ*v/total;
+    g.push(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${colors[i]}" stroke-width="${sw}"
+      stroke-dasharray="${(len-3).toFixed(1)} ${(circ-len+3).toFixed(1)}"
+      stroke-dashoffset="${(-acc).toFixed(1)}" transform="rotate(-90 ${cx} ${cy})"
+      pointer-events="all" data-tip="${tipEsc(LEVEL_NAMES[i]+'：'+v+' 条 · '+(v/total*100).toFixed(1)+'%')}"/>`);
+    acc+=len;
+  });
+  g.push(`<text x="${cx}" y="${cy-2}" fill="${C.text}" font-size="20" font-weight="700" text-anchor="middle">${total}</text>`);
+  g.push(`<text x="${cx}" y="${cy+17}" fill="${C.neutral}" font-size="11" text-anchor="middle">告警总数</text>`);
+  document.getElementById('levelChart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${g.join('')}</svg>`;
+  document.getElementById('levelLegend').innerHTML=LEVEL_NAMES.map((n,i)=>
+    `<div data-tip="${tipEsc(n+'：'+data[i]+' 条 · '+(data[i]/total*100).toFixed(1)+'%')}">
+      <i style="background:${colors[i]};color:${colors[i]}"></i>${n}
+      <em>${(data[i]/total*100).toFixed(1)}%</em><b>${data[i]} 条</b></div>`).join('');
+}
+
+/* 告警状态分布 */
+function renderStatus(p){
+  const data=PERIOD_DATA[p].status,total=data[0]+data[1];
+  const rows=[{n:'活动',v:data[0],c:AB},{n:'已分布',v:data[1],c:AG}];
+  document.getElementById('statusList').innerHTML=rows.map(d=>
+    `<div class="status-row" data-tip="${tipEsc(d.n+'：'+d.v+' 条 · '+(d.v/total*100).toFixed(1)+'%')}">
+      <div class="top">${d.n}<b>${d.v}<small>条 · ${(d.v/total*100).toFixed(1)}%</small></b></div>
+      <div class="status-bar"><i style="width:${d.v/total*100}%;background:${d.c};color:${d.c}"></i></div></div>`).join('');
+}
+
+/* 报警系统分布：系统名称用 mock 文案 */
+function renderSystems(p){
+  const data=PERIOD_DATA[p].systems,total=data.reduce((s,v)=>s+v,0);
+  const cells=[...SYS_NAMES.map((n,i)=>({n,v:data[i],icon:SYS_KEYS[i],c:i%2?AG:AB})),
+               {n:'告警合计',v:total,icon:'total',c:AG}];
+  document.getElementById('sysGrid').innerHTML=cells.map(s=>
+    `<div class="sys-cell" style="--sc:${s.c}" data-tip="${tipEsc(s.n+'：'+s.v+' 条')}">
+      <div class="sys-ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+        stroke-linecap="round" stroke-linejoin="round">${SYS_ICONS[s.icon]}</svg></div>
+      <div class="sys-txt"><b>${s.n}</b><span>${s.v}</span></div></div>`).join('');
+}
+
+function renderAlarmDetail(p){
+  alarmPeriod=p;
+  renderInfoView();renderStockWarn(p);renderTrend(p);renderTypes(p);renderLevels(p);renderStatus(p);renderSystems(p);
+}
+function openAlarmModal(){
+  alarmModal.classList.add('open');
+  if(!detailRendered){ renderAlarmDetail(alarmPeriod); detailRendered=true; }
+}
+function closeAlarmModal(){ alarmModal.classList.remove('open'); document.getElementById('alarmChartTip').style.display='none'; }
+document.getElementById('alarmViewBtn').addEventListener('click',openAlarmModal);
+document.getElementById('alarmClose').addEventListener('click',closeAlarmModal);
+alarmModal.addEventListener('click',e=>{ if(e.target===alarmModal) closeAlarmModal(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeAlarmModal(); });
+document.querySelectorAll('.am-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.am-tab').forEach(b=>b.classList.toggle('active',b===btn));
+    document.getElementById('amInfo').classList.toggle('active',btn.dataset.tab==='info');
+    document.getElementById('amStat').classList.toggle('active',btn.dataset.tab==='stat');
+    document.getElementById('alarmChartTip').style.display='none';
+  });
+});
+document.querySelectorAll('#alarmPeriod button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('#alarmPeriod button').forEach(b=>b.classList.toggle('on',b===btn));
+    renderAlarmDetail(btn.dataset.p);
+  });
+});
+
+/* hover 数值标签：参考指挥大屏 .chart-tip，锚定命中元素正上方 */
+const alarmTipEl=document.getElementById('alarmChartTip');
+function formatAlarmTip(raw){
+  let txt=String(raw==null?'':raw).trim();
+  const cm=txt.match(/^([^：:]+)[：:]\s*(.*)$/);
+  if(!cm) return `<div class="ct-row"><span class="ct-v">${tipEsc(txt)}</span></div>`;
+  const rows=cm[2].split(/\s*(?:·|\/)\s*/).map(p=>{
+    const pm=p.trim().match(/^([^：:\d]+?)[：:]\s*(.*)$/);
+    return pm?`<div class="ct-row"><span class="ct-k">${tipEsc(pm[1])}：</span><span class="ct-v">${tipEsc(pm[2])}</span></div>`
+             :`<div class="ct-row"><span class="ct-v">${tipEsc(p.trim())}</span></div>`;
+  }).join('');
+  return `<div class="ct-title">${tipEsc(cm[1])}</div>`+rows;
+}
+document.addEventListener('pointermove',e=>{
+  const target=e.target.closest&&e.target.closest('[data-tip]');
+  if(!target||!alarmModal.classList.contains('open')){ alarmTipEl.style.display='none'; return; }
+  alarmTipEl.innerHTML=formatAlarmTip(target.getAttribute('data-tip'));
+  alarmTipEl.style.display='block';
+  const r=target.getBoundingClientRect(),tw=alarmTipEl.offsetWidth,th=alarmTipEl.offsetHeight;
+  const s=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--s'))||1;
+  const gap=Math.max(4,6*s);
+  let x=r.left+r.width/2-tw/2,y=r.top-th-gap;
+  x=Math.max(6,Math.min(x,innerWidth-tw-6));
+  if(y<6) y=r.bottom+gap;
+  alarmTipEl.style.left=x+'px'; alarmTipEl.style.top=y+'px';
+},true);
+document.addEventListener('pointerdown',()=>{ alarmTipEl.style.display='none'; },true);
+
+/* ================= 质量分析：计划/实际产出（柱状）+ 合格率（曲线），双纵轴，周期联动 ================= */
+/* 今日=每 2 小时 / 本周=每日 / 本月=每日 / 本年=每月；合格率：绑扎质量口径 */
+const Q_DATA={
+ '今日':{
+  labels:['00:00','02:00','04:00','06:00','08:00','10:00','12:00','14:00','16:00','18:00','20:00','22:00'],
+  plan:[0,0,0,1,2,2,3,2,2,1,1,0], act:[0,0,0,1,2,1,3,2,1,1,1,0],
+  rate:[95.2,96.0,94.6,97.1,98.0,96.4,95.8,97.2,96.1,98.1,95.4,96.6]},
+ '本周':{
+  labels:['周一','周二','周三','周四','周五','周六','周日'],
+  plan:[19,18,20,18,19,15,10], act:[18,18,19,17,18,13,9],
+  rate:[96.5,97.2,95.8,96.9,97.5,95.2,96.8]},
+ '本月':{
+  labels:Array.from({length:30},(_,i)=>String(i+1).padStart(2,'0')),
+  plan:[3,2,3,3,2,3,2,3,3,2,3,3,2,3,3,2,3,2,3,3,2,3,3,2,3,2,3,3,2,3],
+  act:[3,2,3,3,2,2,2,3,3,2,3,3,1,3,3,2,3,2,3,2,2,3,3,2,3,2,3,2,2,3],
+  rate:[96.2,97.4,95.8,98.1,96.6,94.3,97.2,96.1,98.0,96.5,
+        96.9,97.6,93.8,98.2,96.4,97.8,96.1,97.2,98.1,97.0,
+        95.6,96.7,98.0,94.9,98.0,96.4,97.5,96.1,96.9,98.2]},
+ '本年':{
+  labels:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+  plan:[72,75,70,78,80,76,74,79,77,75,73,81], act:[70,74,68,77,79,74,72,78,76,73,71,79],
+  rate:[96.8,97.1,95.6,97.5,98.0,96.3,95.9,97.4,96.6,97.8,96.2,97.6]},
+};
+function renderChart(p){
+  const d=Q_DATA[p]||Q_DATA['本月'];
+  const labels=d.labels, plan=d.plan, act=d.act, rate=d.rate, N=labels.length;
+  /* viewBox 比例需接近左列实际容器，避免文字被横向压扁；字号相应放大 */
+  const W=460,H=280,PL=42,PR=40,PT=30,PB=30;
+  const iw=W-PL-PR, ih=H-PT-PB;
+  const maxV=Math.max(...plan,1)+1;
+  const minR=90, maxR=100;
+  const bw=iw/N;
+  const tick=Math.max(1,Math.ceil(N/7));   /* 横轴标签抽样步长 */
+  const g=[];
+  g.push(`<defs>
+   <linearGradient id="pb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.chart2}" stop-opacity=".95"/><stop offset="1" stop-color="${C.chart2}" stop-opacity=".28"/></linearGradient>
+   <linearGradient id="ab" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.chart1}" stop-opacity="1"/><stop offset="1" stop-color="${C.chart1}" stop-opacity=".3"/></linearGradient>
+  </defs>`);
+  /* 轴标题 */
+  g.push(`<text x="${PL}" y="${PT-12}" fill="${C.neutral}" font-size="11">数量/片</text>`);
+  g.push(`<text x="${W-PR}" y="${PT-12}" fill="${C.success}" font-size="11" text-anchor="end">合格率/%</text>`);
+  for(let i=0;i<=4;i++){
+    const y=PT+ih*i/4;
+    const v=Math.round(maxV*(1-i/4));
+    g.push(`<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="${C.line}" stroke-opacity=".22" stroke-dasharray="4 5"/>`);
+    g.push(`<text x="${PL-7}" y="${y+5}" fill="${C.neutral}" font-size="15" text-anchor="end">${v}</text>`);
+    const rv=Math.round((maxR-(maxR-minR)*i/4)*10)/10;
+    g.push(`<text x="${W-PR+7}" y="${y+5}" fill="${C.success}" font-size="15">${rv}</text>`);
+  }
+  plan.forEach((v,i)=>{
+    const x=PL+i*bw;
+    const h=ih*v/maxV, y=PT+ih-h;
+    g.push(`<rect x="${(x+bw*0.08).toFixed(1)}" y="${y.toFixed(1)}" width="${(bw*0.36).toFixed(1)}" height="${h.toFixed(1)}" rx="1.5" fill="url(#pb)"><title>${labels[i]} 计划产出 ${v} 片</title></rect>`);
+  });
+  act.forEach((v,i)=>{
+    const x=PL+i*bw;
+    const h=ih*v/maxV, y=PT+ih-h;
+    g.push(`<rect x="${(x+bw*0.54).toFixed(1)}" y="${y.toFixed(1)}" width="${(bw*0.36).toFixed(1)}" height="${h.toFixed(1)}" rx="1.5" fill="url(#ab)"><title>${labels[i]} 实际产出 ${v} 片</title></rect>`);
+  });
+  const pts=rate.map((v,i)=>`${(PL+i*bw+bw*0.71).toFixed(1)},${(PT+ih-ih*(v-minR)/(maxR-minR)).toFixed(1)}`).join(' ');
+  g.push(`<polyline points="${pts}" fill="none" stroke="${C.success}" stroke-width="2.6"/>`);
+  rate.forEach((v,i)=>{
+    const cx=(PL+i*bw+bw*0.71).toFixed(1), cy=(PT+ih-ih*(v-minR)/(maxR-minR)).toFixed(1);
+    g.push(`<circle cx="${cx}" cy="${cy}" r="3" fill="${C.stage}" stroke="${C.success}" stroke-width="1.8"><title>${labels[i]} 合格率 ${v}%</title></circle>`);
+  });
+  g.push(`<line x1="${PL}" y1="${PT+ih}" x2="${W-PR}" y2="${PT+ih}" stroke="${C.line}" stroke-opacity=".45"/>`);
+  /* 横轴标签：按步长均匀抽样，避免拥挤 */
+  labels.forEach((lb,i)=>{
+    if(i%tick===0){
+      g.push(`<text x="${(PL+i*bw+bw/2).toFixed(1)}" y="${H-9}" fill="${C.neutral}" font-size="14" text-anchor="middle">${lb}</text>`);
+    }
+  });
+  document.getElementById('chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${g.join('')}</svg>`;
+}
+renderChart('今日');
+
+/* 时间维度切换：统一驱动质量分析 + 仓储出入库 */
+let qaPeriod='今日';
+document.querySelectorAll('#qaPeriod button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('#qaPeriod button').forEach(b=>b.classList.toggle('on',b===btn));
+    qaPeriod=btn.dataset.p;
+    renderChart(qaPeriod);
+    renderWarehouse(qaPeriod);
+  });
+});
+</script>
+
+
+
+
+</body></html>

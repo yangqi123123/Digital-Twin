@@ -1,0 +1,10 @@
+# 本地工具缓存与临时目录，不提交
+.analysis/
+.dsh/
+.oil-ui/
+.slidep/
+.workbuddy/
+
+# 超过 GitHub 单文件 100MB 限制的源文件（按需用网盘/LFS 单独管理）
+visit_screens/assets/images/产线数字化IoT系统.fig
+docs/00工艺作业标准/目视化设计-过程更新（1027）.pptx
