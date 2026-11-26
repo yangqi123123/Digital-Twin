@@ -90,12 +90,12 @@
   .task-info h3{font-size:19px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .task-info p{font-size:13px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .task-info p b{color:var(--brand-cyan);font-weight:600;}
-  /* 数字孪生：只展示视频 */
-  .p2{flex:0 0 168px;}
+  /* 数字孪生：只展示视频（与视频监控高度等分） */
+  .p2{flex:1 1 0;}
   .twin-shot{flex:1;min-height:0;margin:8px 12px 10px;overflow:hidden;position:relative;border:1px solid var(--border-soft);border-radius:2px;background:var(--bg-deep);}
   .twin-shot img,.twin-shot video{width:100%;height:100%;object-fit:cover;display:block;}
-  /* 视频监控：全屏做成按钮样式、hover 才显示 */
-  .p3{flex:1 1 auto;}
+  /* 视频监控：全屏做成按钮样式、hover 才显示（与数字孪生高度等分） */
+  .p3{flex:1 1 0;}
   .cams{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex:1;padding:8px 12px 12px;min-height:0;}
   .cam{position:relative;display:flex;flex-direction:column;min-width:0;border:1px solid var(--border-soft);border-radius:2px;overflow:hidden;background:var(--gradient-panel);}
   .cam-view{border:0;background:none;padding:0;flex:1;min-height:0;display:block;width:100%;}
@@ -113,10 +113,10 @@
   .task-media:hover .fs-btn,.twin-shot:hover .fs-btn,.cam:hover .fs-btn{opacity:1;transform:scale(1);}
   .cam:hover span{color:var(--brand-cyan);}
   .cam-stage{display:none;position:relative;background:var(--bg-deep);color:var(--text-primary);}
-  .cam-stage:fullscreen{display:flex;width:100vw;height:100vh;padding:64px 24px 24px;align-items:center;justify-content:center;}
-  .cam-stage:fullscreen img,.cam-stage:fullscreen video{display:block;max-width:100%;max-height:100%;object-fit:contain;}
+  .cam-stage:fullscreen{display:flex;width:100vw;height:100vh;padding:0;align-items:center;justify-content:center;background:#000;}
+  .cam-stage:fullscreen img,.cam-stage:fullscreen video{display:block;width:100%;height:100%;object-fit:contain;}
   .cam-stage:fullscreen img[hidden],.cam-stage:fullscreen video[hidden]{display:none;}
-  .cam-stage-bar{position:absolute;left:24px;right:24px;top:16px;height:40px;display:flex;align-items:center;justify-content:space-between;font-size:18px;}
+  .cam-stage-bar{display:none;}
   .cam-stage-bar button{height:32px;padding:0 16px;border:1px solid var(--border-base);border-radius:4px;font-size:14px;background:var(--bg-elevated);}
 
   /* 中间 · 视图切换（模型左侧竖排）/ 工作站入口（模型右侧竖排） */
@@ -145,15 +145,12 @@
     box-shadow:0 0 12px var(--glow-primary) inset;}
   .station-sel>button:hover{border-color:var(--brand-cyan);}
   .station-sel>button::after{content:" ▾";color:var(--brand-cyan);}
-  .station-pop{display:none;position:absolute;right:0;top:42px;width:260px;z-index:20;padding:10px 14px 12px;
+  .station-pop{display:none;position:absolute;right:0;top:42px;width:184px;z-index:20;padding:10px 10px 12px;
     background:rgba(13,52,86,.96);border:1px solid var(--border-base);border-radius:4px;
     box-shadow:0 12px 40px rgba(4,20,38,.6);}
   .station-pop.open{display:block;}
-  .station-pop-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;
+  .station-pop-hd{display:flex;align-items:center;justify-content:center;margin-bottom:10px;
     font-size:18px;font-weight:600;letter-spacing:1px;}
-  .station-pop-hd button{height:28px;padding:0 14px;font-size:13px;border:1px solid var(--border-soft);
-    border-radius:4px;background:var(--gradient-panel);}
-  .station-pop-hd button:hover{border-color:var(--brand-cyan);color:var(--brand-cyan);}
   .station-pop-grid{display:grid;grid-template-columns:1fr;gap:5px;}
   .station-pop-grid button{height:30px;font-size:13px;border:1px solid var(--border-soft);border-radius:3px;
     background:var(--gradient-panel);color:var(--text-secondary);}
@@ -175,17 +172,28 @@
     box-shadow:inset 0 0 40px 4px rgba(9,38,64,.26);}
 
   /* 中间 · 底部工具栏 */
-  .c-foot{height:42px;flex:0 0 42px;display:flex;align-items:center;justify-content:space-between;
+  .c-foot{height:42px;flex:0 0 42px;display:flex;align-items:center;justify-content:flex-start;
     padding:0 12px;font-size:14px;color:var(--text-secondary);
     background:rgba(18,62,92,.35);border:1px solid var(--border-soft);border-radius:4px;}
   .c-foot button{height:32px;padding:0 16px;margin-left:8px;font-size:14px;
     border:1px solid var(--border-soft);border-radius:4px;background:var(--gradient-panel);}
   .c-foot button:hover{border-color:var(--brand-cyan);color:var(--brand-cyan);}
-  /* 底部栏功能/全屏按钮：默认隐藏，鼠标移入底部栏才显示 */
+  /* 底部栏：按钮默认隐藏，鼠标移入显示、移出隐藏；浮窗打开时保持可见可点击 */
   .foot-tools{display:flex;align-items:center;position:relative;}
-  .foot-tools>button,.foot-tools .roam-menu{opacity:0;pointer-events:none;transition:opacity .18s;}
-  .c-foot:hover .foot-tools>button,.c-foot:hover .foot-tools .roam-menu.open{opacity:1;pointer-events:auto;}
-  .foot-tools .roam-menu{position:absolute;right:0;bottom:38px;top:auto;}
+  .foot-tools>button{opacity:0;pointer-events:none;transition:opacity .18s;}
+  .c-foot:hover .foot-tools>button,
+  .c-foot:has(.foot-menu.open) .foot-tools>button{opacity:1;pointer-events:auto;}
+  /* 功能浮窗：独立于 hover，打开后始终可点击 */
+  .foot-menu{display:none;position:absolute;left:0;bottom:38px;min-width:176px;z-index:20;
+    padding:6px 0;background:rgba(13,52,86,.97);border:1px solid var(--border-base);border-radius:4px;
+    box-shadow:0 12px 40px rgba(4,20,38,.6);pointer-events:auto;}
+  .foot-menu.open{display:block;}
+  .foot-menu button{display:block;width:100%;height:34px;margin:0;padding:0 16px;text-align:center;
+    font-size:14px;border:0;border-bottom:1px solid var(--border-soft);background:none;
+    opacity:1;pointer-events:auto;}
+  .foot-menu button:last-child{border-bottom:0;}
+  .foot-menu button:hover{background:rgba(111,220,234,.16);color:var(--brand-cyan);}
+  .foot-tools .roam-menu{display:none;}
 
   /* 右侧 · 数据卡片 */
   .cards{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 190px;gap:16px;}
@@ -194,6 +202,10 @@
   .card .p-head{position:relative;background:var(--bg-card-header);}
   .card .p-head::after{content:"";position:absolute;left:0;top:0;width:64px;height:2px;background:var(--brand-cyan);}
   .card .p-head .dia{filter:none;}
+  /* 详情按钮隐藏，改为点击卡片标题打开详情 */
+  .card .detail-btn{display:none;}
+  .card .p-head-click{cursor:pointer;}
+  .card .p-head-click:hover{color:var(--brand-cyan);}
   .card-body{flex:1;min-height:0;padding:8px 12px;display:flex;flex-direction:column;justify-content:space-between;gap:4px;}
   .kpi-block{padding:4px 8px;border-left:2px solid var(--brand-cyan);border-radius:2px;background:var(--bg-card-kpi);}
   .chart-block{padding:4px 8px;border:1px solid var(--border-card-inner);border-radius:2px;background:var(--bg-card-section);}
@@ -787,9 +799,9 @@
           </div>
           <div class="c-tools">
             <div class="station-sel" id="stationSel" hidden>
-              <button id="stationSelBtn">各工作站入口</button>
+              <button id="stationSelBtn">工作站</button>
               <div class="station-pop" id="stationPop">
-                <div class="station-pop-hd"><span>选择工作站</span><button id="stationPopClose">关闭</button></div>
+                <div class="station-pop-hd"><span>工作站</span></div>
                 <div class="station-pop-grid" id="stationPopGrid"></div>
               </div>
             </div>
@@ -801,16 +813,24 @@
           <div class="veil-2"></div>
         </div>
         <div class="c-foot">
-          <span>左键旋转 · 中键平移 · 滚轮缩放</span>
           <div class="foot-tools">
+            <button id="roamBtn">功能 ▾</button>
             <button id="resetView">视角归位</button>
             <button id="saveView">保存默认视角</button>
-            <button id="roamBtn">功能 ▾</button>
-            <div class="roam-menu" id="roamMenu">
+            <button id="fullBtn">全屏</button>
+            <div class="foot-menu" id="footMenu">
+              <button>展厅直达</button>
+              <button>参观走道</button>
+              <button>中控室直达</button>
+              <button>步行参观</button>
+              <button>参观屏</button>
+              <button>生产屏</button>
+              <button>工位监控</button>
+            </div>
+            <div class="roam-menu" id="roamMenu" hidden>
               <button id="roamStart">自动漫游</button>
               <button id="roamStop">停止漫游</button>
             </div>
-            <button id="fullBtn">全屏</button>
           </div>
         </div>
       </div>
@@ -995,7 +1015,7 @@
   /* 工作站切换：一层 11 个入口下拉（右侧按楼层显示） */
   const mediaPairs = [[$('#wsVideo'), $('#wsShot')], [$('#taskVideo'), $('#taskShot')]];
   function syncStationMedia(name, image) {
-    const assembly = name === 'A01 墙板拼装工作站';
+    const assembly = name === '墙板拼装工作站';
     mediaPairs.forEach(([video, still]) => {
       still.src = image;
       const useVideo = assembly && video.dataset.failed !== 'true';
@@ -1030,23 +1050,21 @@
   ];
   const stationPop = $('#stationPop');
   $('#stationPopGrid').innerHTML = STATIONS.map((st,i)=>
-    `<button data-si="${i}" class="${i===0?'active':''}">${st.code} ${st.name}</button>`).join('');
+    `<button data-si="${i}" class="${i===0?'active':''}">${st.name}</button>`).join('');
   $('#stationSelBtn').addEventListener('click', e=>{ e.stopPropagation(); stationPop.classList.toggle('open'); });
-  $('#stationPopClose').addEventListener('click', e=>{ e.stopPropagation(); stationPop.classList.remove('open'); });
   $$('#stationPopGrid button').forEach(btn=>{
     btn.addEventListener('click', e=>{
       e.stopPropagation();
       const st = STATIONS[+btn.dataset.si];
       $$('#stationPopGrid button').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
-      $('#stationSelBtn').textContent = st.code + ' ' + st.name;
-      $('#taskName').textContent = st.code + ' ' + st.name;
+      $('#taskName').textContent = st.name;
       $('#taskWoCode').textContent = st.task || 'MP20261019001';
       $('#taskOutput').textContent = st.out || '79 / 110';
       $('#taskProgress').textContent = st.prog || '72%';
-      syncStationMedia(st.code+' '+st.name, st.img);
+      syncStationMedia(st.name, st.img);
       stationPop.classList.remove('open');
-      toast('已切换至 ' + st.code + ' ' + st.name);
+      toast('已切换至 ' + st.name);
     });
   });
   document.addEventListener('click', ()=>stationPop.classList.remove('open'));
@@ -1362,9 +1380,12 @@
     tab.addEventListener('click',()=>toast('「'+tab.dataset.soon+'」界面待下发指令后独立制作'));
   });
 
-  /* 漫游菜单 */
+  /* 底部“功能”按钮：点击展开功能浮窗（功能逻辑先不实现） */
+  const footMenu = $('#footMenu');
+  $('#roamBtn').addEventListener('click',e=>{ e.stopPropagation(); footMenu.classList.toggle('open'); });
+  document.addEventListener('click',e=>{ if(!e.target.closest('.foot-tools')) footMenu.classList.remove('open'); });
+  $$('#footMenu button').forEach(b=>b.addEventListener('click',()=>toast(b.textContent+' 功能开发中')));
   const roamMenu = $('#roamMenu');
-  $('#roamBtn').addEventListener('click',()=>roamMenu.classList.toggle('open'));
   let roamTimer = null;
   function setRoam(on){
     if(roamTimer){ clearInterval(roamTimer); roamTimer=null; }
@@ -1383,12 +1404,7 @@
   $('#roamStart').addEventListener('click',()=>setRoam(true));
   $('#roamStop').addEventListener('click',()=>setRoam(false));
 
-  $('#fullBtn').addEventListener('click',()=>{
-    const el = $('#screen');
-    if(document.fullscreenElement){ document.exitFullscreen(); return; }
-    if(el.requestFullscreen){ el.requestFullscreen().catch(()=>toast('当前环境不支持全屏')); }
-    else toast('当前环境不支持全屏');
-  });
+  $('#fullBtn').addEventListener('click',()=>toast('全屏功能开发中'));
 
   /* 模型：左键旋转 / 中键平移 / 滚轮缩放 / 视角保存 */
   const view = Object.assign({x:0,y:0,s:1,r:0}, (()=>{
@@ -1446,14 +1462,8 @@
     view.s = Math.max(1,Math.min(2.5,view.s+(e.deltaY<0?.12:-.12)));
     applyView();
   },{passive:false});
-  $('#resetView').addEventListener('click',()=>{
-    if(roamTimer) setRoam(false);
-    Object.assign(view,{x:0,y:0,s:1,r:0}); applyView(); toast('视角已归位');
-  });
-  $('#saveView').addEventListener('click',()=>{
-    localStorage.setItem('cmdOverviewView',JSON.stringify(view));
-    toast('默认视角已保存');
-  });
+  $('#resetView').addEventListener('click',()=>toast('视角归位功能开发中'));
+  $('#saveView').addEventListener('click',()=>toast('保存默认视角功能开发中'));
 
   /* ===================================================================
      右侧指标区：运营分析（8 模块） / 工厂概况 双视图
@@ -2279,6 +2289,7 @@
 
   function opsCard(m,i){
     const btn=m.detail?`<button class="sub detail-btn" data-detail="${m.detail}">详情</button>`:'';
+    const headAttr=m.detail?` data-detail="${m.detail}" class="p-head p-head-click"`:` class="p-head"`;
     let inner;
     if(m.body){
       inner=m.body;
@@ -2292,7 +2303,7 @@
         ${m.note?`<div class="lean-note">${m.note}</div>`:''}`;
     }
     return `<div class="panel card fade-up" style="--accent:${m.accent};animation-delay:${i*55}ms">
-      <div class="p-head"><i class="dia"></i>${m.title}${btn}</div>
+      <div${headAttr}><i class="dia"></i>${m.title}${btn}</div>
       <div class="ops-card-body${m.focus?' focus':''}">${inner}</div>
       </div>`;
   }
@@ -2947,9 +2958,10 @@
   }
   $('#viewToggle').addEventListener('click',()=>switchView(curView==='ops'?'factory':'ops'));
 
-  /* 详情按钮（事件委托） */
+  /* 详情入口（事件委托）：点击标题或隐藏的详情按钮 */
   $('#opsGrid').addEventListener('click',e=>{
-    const b=e.target.closest('.detail-btn'); if(b) openDetail(b.dataset.detail);
+    const b=e.target.closest('.detail-btn'); if(b){ openDetail(b.dataset.detail); return; }
+    const h=e.target.closest('.p-head-click'); if(h) openDetail(h.dataset.detail);
   });
   $('#detailClose').addEventListener('click',closeDetail);
   detailModal.addEventListener('click',e=>{ if(e.target===detailModal) closeDetail(); });
